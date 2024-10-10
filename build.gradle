@@ -5,5 +5,5 @@ plugins {
 
 application {
     // a main metódust tartalmazó osztály megjelölése
-    mainClass = 'edu.bbte.gradleex.application.HelloWorld'
+    mainClass = 'edu.bbte.idde.dhim2228.Main'
 }
