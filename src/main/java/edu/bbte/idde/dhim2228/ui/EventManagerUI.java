@@ -1,0 +1,126 @@
+package edu.bbte.idde.dhim2228.ui;
+
+import edu.bbte.idde.dhim2228.dao.EventDao;
+import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.dao.implementation.InMemoryEventDaoImpl;
+import edu.bbte.idde.dhim2228.model.EventModel;
+import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.service.implementation.EventServiceImp;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+
+public class EventManagerUI extends JFrame {
+    EventService eventService;
+    JTable eventsTable;
+    DefaultTableModel tableModel;
+
+    public EventManagerUI() {
+        EventDao eventDao = new InMemoryEventDaoImpl();
+        eventService = new EventServiceImp(eventDao);
+
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = 650;
+        int x = (screenSize.width - width) / 2;
+        int height = 750;
+        int y = (screenSize.height - height) / 2;
+        this.setBounds(x, y, width, height);
+        this.setLayout(new BorderLayout());
+        this.setTitle("Esemenykezelő rendszer");
+
+        String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "ID"};
+
+        tableModel = new DefaultTableModel(columnNames, 0);
+        eventsTable = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(eventsTable);
+        this.add(scrollPane, BorderLayout.CENTER);
+
+        fillTableWithEvents();
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+
+        JButton refreshButton = new JButton("Frissít");
+        refreshButton.addActionListener(e -> fillTableWithEvents());
+        buttonPanel.add(refreshButton);
+
+        JButton addEventButton = new JButton("Új esemény hozzáadása");
+        addEventButton.addActionListener(e -> new AddEventUI(eventService, this));
+        buttonPanel.add(addEventButton);
+
+        JButton deleteEvent = new JButton("Törlés");
+        deleteEvent.addActionListener(e -> deleteEvent());
+        buttonPanel.add(deleteEvent);
+
+        this.add(buttonPanel, BorderLayout.SOUTH);
+        this.setVisible(true);
+    }
+
+    public void fillTableWithEvents() {
+        Collection<EventModel> events = eventService.getAllEvents();
+        tableModel.setRowCount(0);
+
+        if (events.isEmpty()) {
+            return;
+        }
+
+        for (EventModel event : events) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDate = event.getDate().format(formatter);
+
+            Object[] rowData = {
+                    event.getName(),
+                    event.getLocation(),
+                    formattedDate,
+                    event.getOnline() ? "igen" : "nem",
+                    event.getId(),
+            };
+            tableModel.addRow(rowData);
+        }
+    }
+
+    private void deleteEvent() {
+        int[] selectedRows = eventsTable.getSelectedRows();
+
+        if (selectedRows.length == 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Ahhoz, hogy eseményt törölj ki kell választanod a táblázatban.",
+                    "Információ",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Biztosan törölni szeretnéd a kiválasztott eseményt?",
+                "Megerősítés",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.NO_OPTION) {
+            return;
+        }
+
+        for (int rowIndex : selectedRows) {
+            Long eventId = Long.parseLong(eventsTable.getValueAt(rowIndex, 4).toString());
+            try {
+                eventService.deleteEvent(eventId);
+            } catch (NotFoundEventException e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        e.getMessage(),
+                        "Hiba",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        fillTableWithEvents();
+    }
+}

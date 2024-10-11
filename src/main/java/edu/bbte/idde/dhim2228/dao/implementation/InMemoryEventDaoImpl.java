@@ -1,6 +1,7 @@
 package edu.bbte.idde.dhim2228.dao.implementation;
 
 import edu.bbte.idde.dhim2228.dao.EventDao;
+import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
 
 import java.util.Collection;
@@ -12,8 +13,12 @@ public class InMemoryEventDaoImpl implements EventDao {
     private final AtomicLong counter = new AtomicLong(0);
 
     @Override
-    public EventModel getEventById(Long id) {
-        return events.get(id);
+    public EventModel getEventById(Long id) throws NotFoundEventException {
+        EventModel event = events.get(id);
+        if (event == null) {
+            throw new NotFoundEventException("Event with id " + id + " not found");
+        }
+        return event;
     }
 
     @Override
@@ -29,12 +34,19 @@ public class InMemoryEventDaoImpl implements EventDao {
     }
 
     @Override
-    public void updateEvent(EventModel event) {
+    public void updateEvent(EventModel event) throws NotFoundEventException {
+        EventModel oldEvent = getEventById(event.getId());
+        if (oldEvent == null) {
+            throw new NotFoundEventException("Event with id " + event.getId() + " not found");
+        }
         System.out.println("Updating event");
     }
 
     @Override
-    public void deleteEvent(Long id) {
-        events.remove(id);
+    public void deleteEvent(Long id) throws NotFoundEventException {
+        EventModel eventId = events.remove(id);
+        if (eventId == null) {
+            throw new NotFoundEventException("Event with id " + id + " not found");
+        }
     }
 }
