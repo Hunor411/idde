@@ -57,8 +57,33 @@ public class EventManagerUI extends JFrame {
         deleteEvent.addActionListener(e -> deleteEvent());
         buttonPanel.add(deleteEvent);
 
+        JButton updateEventButton = new JButton("Módosítás");
+        updateEventButton.addActionListener(e -> updateEvent());
+        buttonPanel.add(updateEventButton);
+
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.setVisible(true);
+    }
+
+    private void updateEvent() {
+        int selectedRow = eventsTable.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Ahhoz, hogy eseményt módosíts, ki kell választanod egy eseményt a táblázatban.",
+                    "Információ",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        Long eventId = Long.parseLong(eventsTable.getValueAt(selectedRow, 4).toString());
+        String eventName = eventsTable.getValueAt(selectedRow, 0).toString();
+        String eventLocation = eventsTable.getValueAt(selectedRow, 1).toString();
+        String eventDate = eventsTable.getValueAt(selectedRow, 2).toString();
+        boolean isOnline = eventsTable.getValueAt(selectedRow, 3).toString().equals("igen");
+
+        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline);
     }
 
     public void fillTableWithEvents() {

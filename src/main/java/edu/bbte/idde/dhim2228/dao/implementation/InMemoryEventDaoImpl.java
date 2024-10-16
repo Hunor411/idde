@@ -34,12 +34,17 @@ public class InMemoryEventDaoImpl implements EventDao {
     }
 
     @Override
-    public void updateEvent(EventModel event) throws NotFoundEventException {
-        EventModel oldEvent = getEventById(event.getId());
+    public void updateEvent(Long id, EventModel event) throws NotFoundEventException {
+        EventModel oldEvent = getEventById(id);
         if (oldEvent == null) {
             throw new NotFoundEventException("Event with id " + event.getId() + " not found");
         }
-        System.out.println("Updating event");
+
+        oldEvent.setName(event.getName());
+        oldEvent.setDate(event.getDate());
+        oldEvent.setLocation(event.getLocation());
+        oldEvent.setOnline(event.getOnline());
+        events.put(id, oldEvent);
     }
 
     @Override

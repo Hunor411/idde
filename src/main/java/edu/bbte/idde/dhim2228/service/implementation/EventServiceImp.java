@@ -30,8 +30,8 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public void updateEvent(EventModel event) throws NotFoundEventException {
-        eventDao.updateEvent(event);
+    public void updateEvent(Long id, EventModel event) throws NotFoundEventException {
+        eventDao.updateEvent(id, event);
     }
 
     @Override

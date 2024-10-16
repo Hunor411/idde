@@ -9,7 +9,6 @@ public interface EventService {
     EventModel getEventById(Long id) throws NotFoundEventException;
     Collection<EventModel> getAllEvents();
     void createEvent(EventModel event);
-    void updateEvent(EventModel event) throws NotFoundEventException;
+    void updateEvent(Long id, EventModel event) throws NotFoundEventException;
     void deleteEvent(Long id) throws NotFoundEventException;
-
 }
