@@ -7,13 +7,17 @@ public class EventModel extends BaseModel {
     private String location;
     private LocalDateTime date;
     private Boolean isOnline;
+    private String description;
+    private Integer attendeesCount;
 
-    public EventModel(String name, String location, LocalDateTime date, Boolean isOnline) {
+    public EventModel(String name, String location, LocalDateTime date, Boolean isOnline, String description, Integer attendeesCount) {
         super(null);
         this.name = name;
         this.location = location;
         this.date = date;
         this.isOnline = isOnline;
+        this.description = description;
+        this.attendeesCount = attendeesCount;
     }
 
     public String getName() {
@@ -46,5 +50,21 @@ public class EventModel extends BaseModel {
 
     public void setOnline(Boolean online) {
         isOnline = online;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getAttendeesCount() {
+        return attendeesCount;
+    }
+
+    public void setAttendeesCount(Integer attendeesCount) {
+        this.attendeesCount = attendeesCount;
     }
 }

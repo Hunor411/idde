@@ -44,6 +44,8 @@ public class InMemoryEventDaoImpl implements EventDao {
         oldEvent.setDate(event.getDate());
         oldEvent.setLocation(event.getLocation());
         oldEvent.setOnline(event.getOnline());
+        oldEvent.setAttendeesCount(event.getAttendeesCount());
+        oldEvent.setDescription(event.getDescription());
         events.put(id, oldEvent);
     }
 

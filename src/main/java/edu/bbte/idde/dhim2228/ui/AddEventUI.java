@@ -16,6 +16,8 @@ public class AddEventUI extends JFrame {
 
     private JTextField nameField;
     private JTextField locationField;
+    private JTextArea descriptionArea;
+    private JTextField attendeesCountField;
     private JComboBox<Integer> yearComboBox;
     private JComboBox<String> monthComboBox;
     private JComboBox<String> dayComboBox;
@@ -38,16 +40,18 @@ public class AddEventUI extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 400;
         int x = (screenSize.width - width) / 2;
-        int height = 300;
+        int height = 400;
         int y = (screenSize.height - height) / 2;
         this.setBounds(x, y, width, height);
         this.setTitle("Új esemény hozzáadása");
-        this.setLayout(new GridLayout(8, 2));
+        this.setLayout(new GridLayout(10, 2));
     }
 
     private void initializeComponents() {
         nameField = new JTextField();
         locationField = new JTextField();
+        descriptionArea = new JTextArea();
+        attendeesCountField = new JTextField();
 
         yearComboBox = new JComboBox<>();
         monthComboBox = new JComboBox<>();
@@ -89,6 +93,12 @@ public class AddEventUI extends JFrame {
         this.add(new JLabel("Helyszín:"));
         this.add(locationField);
 
+        this.add(new JLabel("Leírás:"));
+        this.add(descriptionArea);
+
+        this.add(new JLabel("Résztvevők száma:"));
+        this.add(attendeesCountField);
+
         this.add(new JLabel("Év:"));
         this.add(yearComboBox);
         this.add(new JLabel("Hónap:"));
@@ -109,7 +119,10 @@ public class AddEventUI extends JFrame {
         try {
             String name = nameField.getText();
             String location = locationField.getText();
-            if (name.isEmpty() || location.isEmpty()) {
+            String description = descriptionArea.getText();
+            int attendeesCount = Integer.parseInt(attendeesCountField.getText());
+
+            if (name.isEmpty() || location.isEmpty() || description.isEmpty() || attendeesCountField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Kérlek, tölts ki minden mezőt! ",
                         "Hiba",
@@ -132,7 +145,7 @@ public class AddEventUI extends JFrame {
 
             boolean isOnline = isOnlineCheckBox.isSelected();
 
-            EventModel newEvent = new EventModel(name, location, date, isOnline);
+            EventModel newEvent = new EventModel(name, location, date, isOnline, description, attendeesCount);
             eventService.createEvent(newEvent);
 
             JOptionPane.showMessageDialog(this, "Esemény sikeresen hozzáadva!");
@@ -141,7 +154,7 @@ public class AddEventUI extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Kérlek, adj meg érvényes számokat az órához és perchez.",
+                    "Kérlek, adj meg érvényes számokat az órához, perchez, vagy résztvevők számához.",
                     "Hiba",
                     JOptionPane.ERROR_MESSAGE
             );

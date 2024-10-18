@@ -24,7 +24,7 @@ public class EventManagerUI extends JFrame {
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = 650;
+        int width = 850;
         int x = (screenSize.width - width) / 2;
         int height = 750;
         int y = (screenSize.height - height) / 2;
@@ -32,9 +32,14 @@ public class EventManagerUI extends JFrame {
         this.setLayout(new BorderLayout());
         this.setTitle("Esemenykezelő rendszer");
 
-        String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "ID"};
+        String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "Leírás", "Résztvevők száma", "ID"};
 
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         eventsTable = new JTable(tableModel);
 
         JScrollPane scrollPane = new JScrollPane(eventsTable);
@@ -42,6 +47,13 @@ public class EventManagerUI extends JFrame {
 
         fillTableWithEvents();
 
+        JPanel buttonPanel = getButtonPanel();
+
+        this.add(buttonPanel, BorderLayout.SOUTH);
+        this.setVisible(true);
+    }
+
+    private JPanel getButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
@@ -60,9 +72,7 @@ public class EventManagerUI extends JFrame {
         JButton updateEventButton = new JButton("Módosítás");
         updateEventButton.addActionListener(e -> updateEvent());
         buttonPanel.add(updateEventButton);
-
-        this.add(buttonPanel, BorderLayout.SOUTH);
-        this.setVisible(true);
+        return buttonPanel;
     }
 
     private void updateEvent() {
@@ -77,13 +87,16 @@ public class EventManagerUI extends JFrame {
             return;
         }
 
-        Long eventId = Long.parseLong(eventsTable.getValueAt(selectedRow, 4).toString());
+        Long eventId = Long.parseLong(eventsTable.getValueAt(selectedRow, 6).toString());
         String eventName = eventsTable.getValueAt(selectedRow, 0).toString();
         String eventLocation = eventsTable.getValueAt(selectedRow, 1).toString();
         String eventDate = eventsTable.getValueAt(selectedRow, 2).toString();
         boolean isOnline = eventsTable.getValueAt(selectedRow, 3).toString().equals("igen");
+        String eventDescription = eventsTable.getValueAt(selectedRow, 4).toString();
+        int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
 
-        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline);
+
+        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline, eventDescription, attendeesCount);
     }
 
     public void fillTableWithEvents() {
@@ -103,6 +116,8 @@ public class EventManagerUI extends JFrame {
                     event.getLocation(),
                     formattedDate,
                     event.getOnline() ? "igen" : "nem",
+                    event.getDescription(),
+                    event.getAttendeesCount(),
                     event.getId(),
             };
             tableModel.addRow(rowData);
@@ -134,7 +149,7 @@ public class EventManagerUI extends JFrame {
         }
 
         for (int rowIndex : selectedRows) {
-            Long eventId = Long.parseLong(eventsTable.getValueAt(rowIndex, 4).toString());
+            Long eventId = Long.parseLong(eventsTable.getValueAt(rowIndex, 6).toString());
             try {
                 eventService.deleteEvent(eventId);
             } catch (NotFoundEventException e) {
