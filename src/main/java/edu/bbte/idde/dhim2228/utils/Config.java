@@ -1,0 +1,38 @@
+package edu.bbte.idde.dhim2228.utils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+@Slf4j
+public class Config {
+    private static final Properties properties = new Properties();
+    @Getter
+    private static ConfigType config = new ConfigType();
+
+    static {
+        log.info("Trying to load properties file...");
+        try (InputStream input = Config.class.getClassLoader().getResourceAsStream("application.properties")) {
+            if (input == null) {
+                log.warn("application.properties not found in classpath");
+                log.info("Using in memory database");
+                config.setType("mem");
+            } else {
+                properties.load(input);
+                log.info("Properties file loaded successfully.");
+
+                config.setType(properties.getProperty("database.type"));
+                if (config.getType().equals("jdbc")) {
+                    config.setJdbcUrl(properties.getProperty("jdbc.url"));
+                    config.setUsername(System.getenv("DB_USERNAME"));
+                    config.setPassword(System.getenv("DB_PASSWORD"));
+                }
+            }
+        } catch (IOException e) {
+            log.error("Error loading properties file", e);
+        }
+    }
+}
