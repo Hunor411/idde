@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryEventDaoImpl implements EventDao {
+public class InMemoryEventDao implements EventDao {
     private final ConcurrentHashMap<Long, EventModel> events = new ConcurrentHashMap<>();
     private final AtomicLong counter = new AtomicLong(0);
 
@@ -43,7 +43,7 @@ public class InMemoryEventDaoImpl implements EventDao {
         oldEvent.setName(event.getName());
         oldEvent.setDate(event.getDate());
         oldEvent.setLocation(event.getLocation());
-        oldEvent.setOnline(event.getOnline());
+        oldEvent.setIsOnline(event.getIsOnline());
         oldEvent.setAttendeesCount(event.getAttendeesCount());
         oldEvent.setDescription(event.getDescription());
         events.put(id, oldEvent);

@@ -1,8 +1,9 @@
 package edu.bbte.idde.dhim2228.ui;
 
+import edu.bbte.idde.dhim2228.repository.DaoFactory;
 import edu.bbte.idde.dhim2228.repository.EventDao;
 import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
-import edu.bbte.idde.dhim2228.repository.memory.InMemoryEventDaoImpl;
+import edu.bbte.idde.dhim2228.repository.memory.InMemoryEventDao;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.implementation.EventServiceImp;
@@ -19,7 +20,7 @@ public class EventManagerUI extends JFrame {
     DefaultTableModel tableModel;
 
     public EventManagerUI() {
-        EventDao eventDao = new InMemoryEventDaoImpl();
+        var eventDao = DaoFactory.getInstance().getMemoryDaoFactory();
         eventService = new EventServiceImp(eventDao);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -115,7 +116,7 @@ public class EventManagerUI extends JFrame {
                     event.getName(),
                     event.getLocation(),
                     formattedDate,
-                    event.getOnline() ? "igen" : "nem",
+                    event.getIsOnline() ? "igen" : "nem",
                     event.getDescription(),
                     event.getAttendeesCount(),
                     event.getId(),
