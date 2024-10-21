@@ -1,7 +1,7 @@
-package edu.bbte.idde.dhim2228.dao.implementation;
+package edu.bbte.idde.dhim2228.repository.memory;
 
-import edu.bbte.idde.dhim2228.dao.EventDao;
-import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.repository.EventDao;
+import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
 
 import java.util.Collection;

@@ -1,9 +1,9 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
-import edu.bbte.idde.dhim2228.dao.EventDao;
+import edu.bbte.idde.dhim2228.repository.EventDao;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
-import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 
 import java.util.Collection;
 

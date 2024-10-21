@@ -1,6 +1,6 @@
-package edu.bbte.idde.dhim2228.dao;
+package edu.bbte.idde.dhim2228.repository;
 
-import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
 
 import java.util.Collection;

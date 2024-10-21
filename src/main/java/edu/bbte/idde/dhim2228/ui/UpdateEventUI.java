@@ -1,6 +1,6 @@
 package edu.bbte.idde.dhim2228.ui;
 
-import edu.bbte.idde.dhim2228.dao.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 
