@@ -1,8 +1,7 @@
 package edu.bbte.idde.dhim2228.repository;
 
-import com.sun.tools.jconsole.JConsoleContext;
 import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
-import edu.bbte.idde.dhim2228.repository.memory.InMemoryEventDao;
+import edu.bbte.idde.dhim2228.repository.jdbc.JdbcDaoFactory;
 import edu.bbte.idde.dhim2228.repository.memory.MemoryDaoFactory;
 import edu.bbte.idde.dhim2228.utils.Config;
 import edu.bbte.idde.dhim2228.utils.ConfigType;
@@ -20,16 +19,15 @@ public abstract class DaoFactory {
         ConfigType config = Config.getConfig();
         System.out.println(config.toString());
         if ("mem".equals(config.getType())) {
-            instance = new MemoryDaoFactory();
             log.info("Using in memory implementation.");
+            instance = new MemoryDaoFactory();
         } else if ("jdbc".equals(config.getType())) {
-//            instance = new
             log.info("Using JDBC implementation.");
+            instance = new JdbcDaoFactory();
         } else {
             log.error("Unsupported database type: {}", config.getType());
             throw new RepositoryException("Unsupported database type: " + config.getType());
         }
-        instance = new MemoryDaoFactory();
         return instance;
     }
 

@@ -1,8 +1,8 @@
 package edu.bbte.idde.dhim2228.repository.memory;
 
 import edu.bbte.idde.dhim2228.repository.EventDao;
-import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
+import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,10 +13,10 @@ public class InMemoryEventDao implements EventDao {
     private final AtomicLong counter = new AtomicLong(0);
 
     @Override
-    public EventModel getEventById(Long id) throws NotFoundEventException {
+    public EventModel getEventById(Long id) throws RepositoryException {
         EventModel event = events.get(id);
         if (event == null) {
-            throw new NotFoundEventException("Event with id " + id + " not found");
+            throw new RepositoryException("Event with id " + id + " not found");
         }
         return event;
     }
@@ -34,10 +34,10 @@ public class InMemoryEventDao implements EventDao {
     }
 
     @Override
-    public void updateEvent(Long id, EventModel event) throws NotFoundEventException {
+    public void updateEvent(Long id, EventModel event) throws RepositoryException {
         EventModel oldEvent = getEventById(id);
         if (oldEvent == null) {
-            throw new NotFoundEventException("Event with id " + event.getId() + " not found");
+            throw new RepositoryException("Event with id " + event.getId() + " not found");
         }
 
         oldEvent.setName(event.getName());
@@ -50,10 +50,10 @@ public class InMemoryEventDao implements EventDao {
     }
 
     @Override
-    public void deleteEvent(Long id) throws NotFoundEventException {
+    public void deleteEvent(Long id) throws RepositoryException {
         EventModel eventId = events.remove(id);
         if (eventId == null) {
-            throw new NotFoundEventException("Event with id " + id + " not found");
+            throw new RepositoryException("Event with id " + id + " not found");
         }
     }
 }

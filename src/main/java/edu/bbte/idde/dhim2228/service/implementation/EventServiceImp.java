@@ -3,19 +3,19 @@ package edu.bbte.idde.dhim2228.service.implementation;
 import edu.bbte.idde.dhim2228.repository.EventDao;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
-import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
+import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 
 import java.util.Collection;
 
 public class EventServiceImp implements EventService {
     private final EventDao eventDao;
 
-    public EventServiceImp(EventDao eventDao) {
+    public EventServiceImp(EventDao eventDao) throws ServiceException {
         this.eventDao = eventDao;
     }
 
     @Override
-    public EventModel getEventById(Long id) throws NotFoundEventException {
+    public EventModel getEventById(Long id) throws ServiceException {
         return eventDao.getEventById(id);
     }
 
@@ -25,17 +25,17 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public void createEvent(EventModel event) {
+    public void createEvent(EventModel event) throws ServiceException {
         eventDao.createEvent(event);
     }
 
     @Override
-    public void updateEvent(Long id, EventModel event) throws NotFoundEventException {
+    public void updateEvent(Long id, EventModel event) throws ServiceException {
         eventDao.updateEvent(id, event);
     }
 
     @Override
-    public void deleteEvent(Long id) throws NotFoundEventException {
+    public void deleteEvent(Long id) throws ServiceException {
         eventDao.deleteEvent(id);
     }
 }

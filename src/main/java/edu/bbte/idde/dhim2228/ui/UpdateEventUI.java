@@ -1,8 +1,8 @@
 package edu.bbte.idde.dhim2228.ui;
 
-import edu.bbte.idde.dhim2228.repository.exceptions.NotFoundEventException;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,7 +98,7 @@ public class UpdateEventUI extends JFrame {
                     "Hiba",
                     JOptionPane.ERROR_MESSAGE
             );
-        } catch (NotFoundEventException e) {
+        } catch (ServiceException e) {
             JOptionPane.showMessageDialog(
                     this,
                     e.getMessage(),
