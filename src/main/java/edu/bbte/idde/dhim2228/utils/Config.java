@@ -1,5 +1,6 @@
 package edu.bbte.idde.dhim2228.utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,9 +27,13 @@ public class Config {
 
                 config.setType(properties.getProperty("database.type"));
                 if (config.getType().equals("jdbc")) {
+                    Dotenv dotenv = Dotenv.load();
+                    String username = dotenv.get("DB_USERNAME");
+                    String password = dotenv.get("DB_PASSWORD");
+
                     config.setJdbcUrl(properties.getProperty("jdbc.url"));
-                    config.setUsername(System.getenv("DB_USERNAME"));
-                    config.setPassword(System.getenv("DB_PASSWORD"));
+                    config.setUsername(username);
+                    config.setPassword(password);
                 }
             }
         } catch (IOException e) {

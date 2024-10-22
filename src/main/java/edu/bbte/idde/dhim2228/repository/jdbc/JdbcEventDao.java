@@ -19,9 +19,9 @@ public class JdbcEventDao implements EventDao {
             eventModel.setName(resultSet.getString("name"));
             eventModel.setLocation(resultSet.getString("location"));
             eventModel.setDate(resultSet.getTimestamp("date").toLocalDateTime());
-            eventModel.setIsOnline(resultSet.getBoolean("isOnline"));
+            eventModel.setIsOnline(resultSet.getBoolean("is_online"));
             eventModel.setDescription(resultSet.getString("description"));
-            eventModel.setAttendeesCount(resultSet.getInt("attendeesCount"));
+            eventModel.setAttendeesCount(resultSet.getInt("attendees_count"));
 
             return eventModel;
         }
@@ -92,11 +92,44 @@ public class JdbcEventDao implements EventDao {
 
     @Override
     public void updateEvent(Long id, EventModel event) throws RepositoryException {
+        log.info("Updating event with id: {}", id);
+        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE events SET name = ?, location = ?, date = ?, is_online = ?, description = ?, attendees_count = ? " +
+                            "WHERE id = ?"
+            );
 
+            stmt.setString(1, event.getName());
+            stmt.setString(2, event.getLocation());
+            stmt.setTimestamp(3, java.sql.Timestamp.valueOf(event.getDate()));
+            stmt.setBoolean(4, event.getIsOnline());
+            stmt.setString(5, event.getDescription());
+            stmt.setInt(6, event.getAttendeesCount());
+            stmt.setLong(7, id);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RepositoryException("Event not found with id: " + id);
+            }
+        } catch (SQLException e) {
+            log.error("Updating event with id {} failed", id, e);
+            throw new RepositoryException("Updating event failed: ", e);
+        }
     }
 
     @Override
     public void deleteEvent(Long id) throws RepositoryException {
-
+        log.info("Deleting event: {}", id);
+        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM events WHERE id = ?");
+            stmt.setLong(1, id);
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RepositoryException("Event not found with id: " + id);
+            }
+        } catch (SQLException e) {
+            log.error("Deleting event failed id:{}: ", id, e);
+            throw new RepositoryException("Deleting event failed: ", e);
+        }
     }
 }
