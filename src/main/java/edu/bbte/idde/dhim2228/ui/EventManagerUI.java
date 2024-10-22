@@ -20,7 +20,7 @@ public class EventManagerUI extends JFrame {
     DefaultTableModel tableModel;
 
     public EventManagerUI() {
-        var eventDao = DaoFactory.getInstance().getMemoryDaoFactory();
+        var eventDao = DaoFactory.getInstance().getEventDao();
         eventService = new EventServiceImp(eventDao);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);

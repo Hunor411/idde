@@ -33,5 +33,5 @@ public abstract class DaoFactory {
         return instance;
     }
 
-    public abstract InMemoryEventDao getMemoryDaoFactory();
+    public abstract EventDao getEventDao();
 }
