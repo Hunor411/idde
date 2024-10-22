@@ -19,7 +19,6 @@ public class EventManagerUI extends JFrame {
 
     public EventManagerUI() {
         var eventDao = DaoFactory.getInstance().getEventDao();
-        System.out.println(eventDao);
         eventService = new EventServiceImp(eventDao);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
