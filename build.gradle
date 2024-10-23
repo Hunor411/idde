@@ -17,6 +17,8 @@ dependencies {
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
+apply from: 'lint.gradle'
+
 application {
     // a main metódust tartalmazó osztály megjelölése
     mainClass = 'edu.bbte.idde.dhim2228.Main'

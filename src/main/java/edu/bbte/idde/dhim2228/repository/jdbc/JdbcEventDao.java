@@ -34,7 +34,7 @@ public class JdbcEventDao implements EventDao {
         log.info("Getting event by id: {}", id);
         try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM events WHERE id = ?"
+                    "SELECT * FROM events WHERE id=?"
             );
             stmt.setLong(1, id);
 
@@ -55,7 +55,7 @@ public class JdbcEventDao implements EventDao {
 
             List<EventModel> events = new ArrayList<>();
             EventModel eventModel = getEventFromResultSet(resultSet);
-            while(eventModel != null) {
+            while (eventModel != null) {
                 events.add(eventModel);
                 eventModel = getEventFromResultSet(resultSet);
             }
@@ -69,11 +69,11 @@ public class JdbcEventDao implements EventDao {
 
     @Override
     public void createEvent(EventModel event) {
-            log.info("Creating event: {}", event);
+        log.info("Creating event: {}", event);
         try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO events(name, location, date, is_online, description, attendees_count)" +
-                            "VALUES(?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO events(name, location, date, is_online, description, attendees_count)"
+                            + "VALUES(?, ?, ?, ?, ?, ?)"
             );
 
             stmt.setString(1, event.getName());
@@ -95,8 +95,8 @@ public class JdbcEventDao implements EventDao {
         log.info("Updating event with id: {}", id);
         try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "UPDATE events SET name = ?, location = ?, date = ?, is_online = ?, description = ?, attendees_count = ? " +
-                            "WHERE id = ?"
+                    "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count =?"
+                            + "WHERE id=?"
             );
 
             stmt.setString(1, event.getName());
@@ -121,7 +121,7 @@ public class JdbcEventDao implements EventDao {
     public void deleteEvent(Long id) throws RepositoryException {
         log.info("Deleting event: {}", id);
         try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("DELETE FROM events WHERE id = ?");
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM events WHERE id=?");
             stmt.setLong(1, id);
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {

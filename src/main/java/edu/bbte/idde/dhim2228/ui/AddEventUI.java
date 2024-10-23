@@ -122,7 +122,8 @@ public class AddEventUI extends JFrame {
             String description = descriptionArea.getText();
             int attendeesCount = Integer.parseInt(attendeesCountField.getText());
 
-            if (name.isEmpty() || location.isEmpty() || description.isEmpty() || attendeesCountField.getText().isEmpty()) {
+            if (name.isEmpty() || location.isEmpty() || description.isEmpty()
+                    || attendeesCountField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Kérlek, tölts ki minden mezőt! ",
                         "Hiba",

@@ -95,7 +95,8 @@ public class EventManagerUI extends JFrame {
         int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
 
 
-        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline, eventDescription, attendeesCount);
+        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline,
+                eventDescription, attendeesCount);
     }
 
     public void fillTableWithEvents() {
@@ -108,12 +109,11 @@ public class EventManagerUI extends JFrame {
 
         for (EventModel event : events) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            String formattedDate = event.getDate().format(formatter);
 
             Object[] rowData = {
                     event.getName(),
                     event.getLocation(),
-                    formattedDate,
+                    event.getDate().format(formatter),
                     event.getIsOnline() ? "igen" : "nem",
                     event.getDescription(),
                     event.getAttendeesCount(),

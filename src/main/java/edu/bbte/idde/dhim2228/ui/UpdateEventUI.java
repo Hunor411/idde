@@ -21,7 +21,9 @@ public class UpdateEventUI extends JFrame {
     JTextField attendeesCountField;
     JCheckBox isOnlineCheckBox;
 
-    public UpdateEventUI(EventService eventService, EventManagerUI parentUI, Long eventId, String eventName, String eventLocation, String eventDate, boolean isOnline, String eventDescription, int attendeesCount) {
+    public UpdateEventUI(EventService eventService, EventManagerUI parentUI, Long eventId, String eventName,
+                         String eventLocation, String eventDate, boolean isOnline, String eventDescription,
+                         int attendeesCount) {
         this.eventService = eventService;
         this.parentUI = parentUI;
         this.eventId = eventId;

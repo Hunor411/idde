@@ -7,8 +7,12 @@ import java.util.Collection;
 
 public interface EventDao {
     EventModel getEventById(Long id) throws RepositoryException;
+
     Collection<EventModel> getAllEvents() throws RepositoryException;
+
     void createEvent(EventModel event) throws RepositoryException;
+
     void updateEvent(Long id, EventModel event) throws RepositoryException;
+
     void deleteEvent(Long id)  throws RepositoryException;
 }
