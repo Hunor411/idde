@@ -2,6 +2,7 @@ package edu.bbte.idde.dhim2228.ui;
 
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.service.ServiceFactory;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 
 import javax.swing.*;
@@ -12,7 +13,7 @@ import java.time.format.DateTimeParseException;
 
 public class UpdateEventUI extends JFrame {
     private final EventService eventService;
-    private final EventManagerUI parentUI;
+    private final EventManager parentUI;
     private final Long eventId;
     JTextField nameField;
     JTextField locationField;
@@ -21,10 +22,10 @@ public class UpdateEventUI extends JFrame {
     JTextField attendeesCountField;
     JCheckBox isOnlineCheckBox;
 
-    public UpdateEventUI(EventService eventService, EventManagerUI parentUI, Long eventId, String eventName,
+    public UpdateEventUI(EventManager parentUI, Long eventId, String eventName,
                          String eventLocation, String eventDate, boolean isOnline, String eventDescription,
                          int attendeesCount) {
-        this.eventService = eventService;
+        this.eventService = ServiceFactory.getInstance().getEventService();
         this.parentUI = parentUI;
         this.eventId = eventId;
 

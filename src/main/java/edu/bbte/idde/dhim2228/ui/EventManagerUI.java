@@ -1,8 +1,8 @@
 package edu.bbte.idde.dhim2228.ui;
 
-import edu.bbte.idde.dhim2228.repository.DaoFactory;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.service.ServiceFactory;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 import edu.bbte.idde.dhim2228.service.implementation.EventServiceImp;
 
@@ -10,16 +10,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class EventManagerUI extends JFrame {
-    EventService eventService;
-    JTable eventsTable;
-    DefaultTableModel tableModel;
+public class EventManagerUI extends JFrame implements EventManager {
+    private final EventService eventService;
+    private final JTable eventsTable;
+    private final DefaultTableModel tableModel;
 
     public EventManagerUI() {
-        var eventDao = DaoFactory.getInstance().getEventDao();
-        eventService = new EventServiceImp(eventDao);
+        this.eventService = ServiceFactory.getInstance().getEventService();
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -61,7 +61,7 @@ public class EventManagerUI extends JFrame {
         buttonPanel.add(refreshButton);
 
         JButton addEventButton = new JButton("Új esemény hozzáadása");
-        addEventButton.addActionListener(e -> new AddEventUI(eventService, this));
+        addEventButton.addActionListener(e -> new AddEventUI(this));
         buttonPanel.add(addEventButton);
 
         JButton deleteEvent = new JButton("Törlés");
@@ -94,11 +94,11 @@ public class EventManagerUI extends JFrame {
         String eventDescription = eventsTable.getValueAt(selectedRow, 4).toString();
         int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
 
-
-        new UpdateEventUI(eventService, this, eventId, eventName, eventLocation, eventDate, isOnline,
+        new UpdateEventUI(this, eventId, eventName, eventLocation, eventDate, isOnline,
                 eventDescription, attendeesCount);
     }
 
+    @Override
     public void fillTableWithEvents() {
         Collection<EventModel> events = eventService.getAllEvents();
         tableModel.setRowCount(0);
@@ -122,6 +122,7 @@ public class EventManagerUI extends JFrame {
             tableModel.addRow(rowData);
         }
     }
+
 
     private void deleteEvent() {
         int[] selectedRows = eventsTable.getSelectedRows();

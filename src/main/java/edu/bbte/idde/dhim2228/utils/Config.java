@@ -11,8 +11,16 @@ import java.util.Properties;
 @Slf4j
 public class Config {
     private static final Properties properties = new Properties();
-    @Getter
-    private static ConfigType config = new ConfigType();
+    private static final ConfigType config = new ConfigType();
+
+    public static ConfigType getConfig() {
+        ConfigType copy = new ConfigType();
+        copy.setType(config.getType());
+        copy.setJdbcUrl(config.getJdbcUrl());
+        copy.setUsername(config.getUsername());
+        copy.setPassword(config.getPassword());
+        return copy;
+    }
 
     static {
         log.info("Trying to load properties file...");

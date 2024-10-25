@@ -4,6 +4,7 @@ import edu.bbte.idde.dhim2228.repository.EventDao;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +24,7 @@ public class InMemoryEventDao implements EventDao {
 
     @Override
     public Collection<EventModel> getAllEvents() {
-        return events.values();
+        return new ArrayList<>(events.values());
     }
 
     @Override

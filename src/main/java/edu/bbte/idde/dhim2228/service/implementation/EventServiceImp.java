@@ -1,17 +1,19 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
+import edu.bbte.idde.dhim2228.repository.DaoFactory;
 import edu.bbte.idde.dhim2228.repository.EventDao;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class EventServiceImp implements EventService {
     private final EventDao eventDao;
 
-    public EventServiceImp(EventDao eventDao) throws ServiceException {
-        this.eventDao = eventDao;
+    public EventServiceImp() {
+        eventDao = DaoFactory.getInstance().getEventDao();
     }
 
     @Override
@@ -21,7 +23,7 @@ public class EventServiceImp implements EventService {
 
     @Override
     public Collection<EventModel> getAllEvents() {
-        return eventDao.getAllEvents();
+        return new ArrayList<>(eventDao.getAllEvents());
     }
 
     @Override

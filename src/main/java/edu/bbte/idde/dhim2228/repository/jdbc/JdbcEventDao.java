@@ -32,10 +32,10 @@ public class JdbcEventDao implements EventDao {
     @Override
     public EventModel getEventById(Long id) throws RepositoryException {
         log.info("Getting event by id: {}", id);
-        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM events WHERE id=?"
-            );
+        try (Connection conn = ConnectionManager.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM events WHERE id=?")) {
+
             stmt.setLong(1, id);
 
             ResultSet resultSet = stmt.executeQuery();
@@ -49,9 +49,9 @@ public class JdbcEventDao implements EventDao {
     @Override
     public Collection<EventModel> getAllEvents() throws RepositoryException {
         log.info("Finding all events...");
-        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            Statement stmt = conn.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM events");
+        try (Connection conn = ConnectionManager.getDataSource().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet resultSet = stmt.executeQuery("SELECT * FROM events")) {
 
             List<EventModel> events = new ArrayList<>();
             EventModel eventModel = getEventFromResultSet(resultSet);
@@ -70,11 +70,10 @@ public class JdbcEventDao implements EventDao {
     @Override
     public void createEvent(EventModel event) {
         log.info("Creating event: {}", event);
-        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO events(name, location, date, is_online, description, attendees_count)"
-                            + "VALUES(?, ?, ?, ?, ?, ?)"
-            );
+        try (Connection conn = ConnectionManager.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "INSERT INTO events(name, location, date, is_online, description, attendees_count)"
+                             + "VALUES(?, ?, ?, ?, ?, ?)")) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
@@ -93,11 +92,10 @@ public class JdbcEventDao implements EventDao {
     @Override
     public void updateEvent(Long id, EventModel event) throws RepositoryException {
         log.info("Updating event with id: {}", id);
-        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(
-                    "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count =?"
-                            + "WHERE id=?"
-            );
+        try (Connection conn = ConnectionManager.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count =?"
+                             + "WHERE id=?")) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
@@ -120,8 +118,9 @@ public class JdbcEventDao implements EventDao {
     @Override
     public void deleteEvent(Long id) throws RepositoryException {
         log.info("Deleting event: {}", id);
-        try (Connection conn = ConnectionManager.getDataSource().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("DELETE FROM events WHERE id=?");
+        try (Connection conn = ConnectionManager.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM events WHERE id=?")) {
+
             stmt.setLong(1, id);
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {

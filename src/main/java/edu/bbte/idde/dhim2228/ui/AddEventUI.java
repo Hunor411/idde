@@ -2,6 +2,7 @@ package edu.bbte.idde.dhim2228.ui;
 
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.service.ServiceFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.Locale;
 
 public class AddEventUI extends JFrame {
     private final EventService eventService;
-    private final EventManagerUI parentUI;
+    private final EventManager parentUI;
 
     private JTextField nameField;
     private JTextField locationField;
@@ -26,10 +27,14 @@ public class AddEventUI extends JFrame {
     private JCheckBox isOnlineCheckBox;
     JButton saveButton;
 
-    public AddEventUI(EventService eventService, EventManagerUI parentUI) {
-        this.eventService = eventService;
+    public AddEventUI(EventManager parentUI) {
+        this.eventService = ServiceFactory.getInstance().getEventService();
         this.parentUI = parentUI;
 
+        setupAndShowUI();
+    }
+
+    private void setupAndShowUI() {
         setupUI();
         initializeComponents();
         this.setVisible(true);
