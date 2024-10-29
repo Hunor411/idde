@@ -4,13 +4,11 @@ import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.ServiceFactory;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
-import edu.bbte.idde.dhim2228.service.implementation.EventServiceImp;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class EventManagerUI extends JFrame implements EventManager {
@@ -33,12 +31,7 @@ public class EventManagerUI extends JFrame implements EventManager {
 
         String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "Leírás", "Résztvevők száma", "ID"};
 
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        tableModel = new NonEditableTableModel(columnNames, 0);
         eventsTable = new JTable(tableModel);
 
         JScrollPane scrollPane = new JScrollPane(eventsTable);
@@ -46,13 +39,6 @@ public class EventManagerUI extends JFrame implements EventManager {
 
         fillTableWithEvents();
 
-        JPanel buttonPanel = getButtonPanel();
-
-        this.add(buttonPanel, BorderLayout.SOUTH);
-        this.setVisible(true);
-    }
-
-    private JPanel getButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
@@ -65,41 +51,78 @@ public class EventManagerUI extends JFrame implements EventManager {
         buttonPanel.add(addEventButton);
 
         JButton deleteEvent = new JButton("Törlés");
-        deleteEvent.addActionListener(e -> deleteEvent());
+        deleteEvent.addActionListener(e -> {
+            int[] selectedRows = eventsTable.getSelectedRows();
+
+            if (selectedRows.length == 0) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Ahhoz, hogy eseményt törölj ki kell választanod a táblázatban.",
+                        "Információ",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Biztosan törölni szeretnéd a kiválasztott eseményt?",
+                    "Megerősítés",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.NO_OPTION) {
+                return;
+            }
+
+            for (int rowIndex : selectedRows) {
+                Long eventId = Long.parseLong(eventsTable.getValueAt(rowIndex, 6).toString());
+                try {
+                    eventService.deleteEvent(eventId);
+                } catch (ServiceException ex) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            ex.getMessage(),
+                            "Hiba",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            fillTableWithEvents();
+        });
         buttonPanel.add(deleteEvent);
 
         JButton updateEventButton = new JButton("Módosítás");
-        updateEventButton.addActionListener(e -> updateEvent());
+        updateEventButton.addActionListener(e -> {
+            int selectedRow = eventsTable.getSelectedRow();
+
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Ahhoz, hogy eseményt módosíts, ki kell választanod egy eseményt a táblázatban.",
+                        "Információ",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            Long eventId = Long.parseLong(eventsTable.getValueAt(selectedRow, 6).toString());
+            String eventName = eventsTable.getValueAt(selectedRow, 0).toString();
+            String eventLocation = eventsTable.getValueAt(selectedRow, 1).toString();
+            String eventDate = eventsTable.getValueAt(selectedRow, 2).toString();
+            boolean isOnline = eventsTable.getValueAt(selectedRow, 3).toString().equals("igen");
+            String eventDescription = eventsTable.getValueAt(selectedRow, 4).toString();
+            int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
+
+            new UpdateEventUI(this, eventId, eventName, eventLocation, eventDate, isOnline,
+                    eventDescription, attendeesCount);
+        });
         buttonPanel.add(updateEventButton);
-        return buttonPanel;
-    }
 
-    private void updateEvent() {
-        int selectedRow = eventsTable.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Ahhoz, hogy eseményt módosíts, ki kell választanod egy eseményt a táblázatban.",
-                    "Információ",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        Long eventId = Long.parseLong(eventsTable.getValueAt(selectedRow, 6).toString());
-        String eventName = eventsTable.getValueAt(selectedRow, 0).toString();
-        String eventLocation = eventsTable.getValueAt(selectedRow, 1).toString();
-        String eventDate = eventsTable.getValueAt(selectedRow, 2).toString();
-        boolean isOnline = eventsTable.getValueAt(selectedRow, 3).toString().equals("igen");
-        String eventDescription = eventsTable.getValueAt(selectedRow, 4).toString();
-        int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
-
-        new UpdateEventUI(this, eventId, eventName, eventLocation, eventDate, isOnline,
-                eventDescription, attendeesCount);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+        this.setVisible(true);
     }
 
     @Override
-    public void fillTableWithEvents() {
+    public final void fillTableWithEvents() {
         Collection<EventModel> events = eventService.getAllEvents();
         tableModel.setRowCount(0);
 
@@ -123,44 +146,14 @@ public class EventManagerUI extends JFrame implements EventManager {
         }
     }
 
-
-    private void deleteEvent() {
-        int[] selectedRows = eventsTable.getSelectedRows();
-
-        if (selectedRows.length == 0) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Ahhoz, hogy eseményt törölj ki kell választanod a táblázatban.",
-                    "Információ",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
+    private static class NonEditableTableModel extends DefaultTableModel {
+        public NonEditableTableModel(Object[] columnNames, int rowCount) {
+            super(columnNames, rowCount);
         }
 
-
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Biztosan törölni szeretnéd a kiválasztott eseményt?",
-                "Megerősítés",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirm == JOptionPane.NO_OPTION) {
-            return;
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
-
-        for (int rowIndex : selectedRows) {
-            Long eventId = Long.parseLong(eventsTable.getValueAt(rowIndex, 6).toString());
-            try {
-                eventService.deleteEvent(eventId);
-            } catch (ServiceException e) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        e.getMessage(),
-                        "Hiba",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        fillTableWithEvents();
     }
 }

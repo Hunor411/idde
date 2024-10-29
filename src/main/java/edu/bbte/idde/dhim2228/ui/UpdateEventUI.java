@@ -42,7 +42,53 @@ public class UpdateEventUI extends JFrame {
         isOnlineCheckBox = new JCheckBox("Online", isOnline);
 
         JButton saveButton = new JButton("Mentés");
-        saveButton.addActionListener(e -> updateEvent());
+        saveButton.addActionListener(e -> {
+            String name = nameField.getText();
+            String location = locationField.getText();
+            String dateStr = dateField.getText();
+            String description = descriptionArea.getText();
+            int attendees;
+
+            try {
+                attendees = Integer.parseInt(attendeesCountField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Kérlek, adj meg érvényes számot a résztvevők számához.",
+                        "Hiba",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            boolean online = isOnlineCheckBox.isSelected();
+
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime date = LocalDateTime.parse(dateStr, formatter);
+
+                EventModel updatedEvent = new EventModel(name, location, date, online, description, attendees);
+                eventService.updateEvent(eventId, updatedEvent);
+
+                JOptionPane.showMessageDialog(this, "Esemény sikeresen módosítva!");
+                parentUI.fillTableWithEvents();
+                this.dispose();
+            } catch (DateTimeParseException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Érvénytelen dátum formátum. Helyes formátum: yyyy-MM-dd HH:mm",
+                        "Hiba",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            } catch (ServiceException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        ex.getMessage(),
+                        "Hiba",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
 
         this.add(new JLabel("Esemény neve:"));
         this.add(nameField);
@@ -61,53 +107,5 @@ public class UpdateEventUI extends JFrame {
         this.add(saveButton);
 
         this.setVisible(true);
-    }
-
-    private void updateEvent() {
-        String name = nameField.getText();
-        String location = locationField.getText();
-        String dateStr = dateField.getText();
-        String description = descriptionArea.getText();
-        int attendees;
-
-        try {
-            attendees = Integer.parseInt(attendeesCountField.getText());
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Kérlek, adj meg érvényes számot a résztvevők számához.",
-                    "Hiba",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        boolean online = isOnlineCheckBox.isSelected();
-
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime date = LocalDateTime.parse(dateStr, formatter);
-
-            EventModel updatedEvent = new EventModel(name, location, date, online, description, attendees);
-            eventService.updateEvent(eventId, updatedEvent);
-
-            JOptionPane.showMessageDialog(this, "Esemény sikeresen módosítva!");
-            parentUI.fillTableWithEvents();
-            this.dispose();
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Érvénytelen dátum formátum. Helyes formátum: yyyy-MM-dd HH:mm",
-                    "Hiba",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        } catch (ServiceException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Hiba",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
     }
 }
