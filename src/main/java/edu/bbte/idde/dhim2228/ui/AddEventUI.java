@@ -3,6 +3,7 @@ package edu.bbte.idde.dhim2228.ui;
 import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.ServiceFactory;
+import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +15,20 @@ import java.util.Locale;
 public class AddEventUI extends JFrame {
     private final EventService eventService;
 
-    private final JTextField nameField;
-    private final JTextField locationField;
-    private final JTextArea descriptionArea;
-    private final JTextField attendeesCountField;
-    private final JComboBox<Integer> yearComboBox;
-    private final JComboBox<String> monthComboBox;
-    private final JComboBox<String> dayComboBox;
-    private final JTextField hourField;
-    private final JTextField minuteField;
-    private final JCheckBox isOnlineCheckBox;
+    private JTextField nameField;
+    private JTextField locationField;
+    private JTextArea descriptionArea;
+    private JTextField attendeesCountField;
+    private JComboBox<Integer> yearComboBox;
+    private JComboBox<String> monthComboBox;
+    private JComboBox<String> dayComboBox;
+    private JTextField hourField;
+    private JTextField minuteField;
+    private JCheckBox onlineEventCheckBox;
     JButton saveButton;
 
     public AddEventUI(EventManager parentUI) {
+        super();
         this.eventService = ServiceFactory.getInstance().getEventService();
 
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -39,14 +41,7 @@ public class AddEventUI extends JFrame {
         this.setTitle("Új esemény hozzáadása");
         this.setLayout(new GridLayout(10, 2));
 
-        nameField = new JTextField();
-        locationField = new JTextField();
-        descriptionArea = new JTextArea();
-        attendeesCountField = new JTextField();
-
-        yearComboBox = new JComboBox<>();
-        monthComboBox = new JComboBox<>();
-        dayComboBox = new JComboBox<>();
+        initializeUIComponents();
 
         for (int year = 2024; year <= 2030; year++) {
             yearComboBox.addItem(year);
@@ -63,21 +58,9 @@ public class AddEventUI extends JFrame {
         }
         dayComboBox.setSelectedIndex(0);
 
-        hourField = new JTextField();
-        minuteField = new JTextField();
-
-        isOnlineCheckBox = new JCheckBox("Online esemény");
-
-        saveButton = new JButton("Mentés");
         saveButton.addActionListener(e -> {
             try {
-                String name = nameField.getText();
-                String location = locationField.getText();
-                String description = descriptionArea.getText();
-                int attendeesCount = Integer.parseInt(attendeesCountField.getText());
-
-                if (name.isEmpty() || location.isEmpty() || description.isEmpty()
-                        || attendeesCountField.getText().isEmpty()) {
+                if (!areFieldsValid()) {
                     JOptionPane.showMessageDialog(
                             this,
                             "Kérlek, tölts ki minden mezőt! ",
@@ -87,33 +70,24 @@ public class AddEventUI extends JFrame {
                     return;
                 }
 
-                int year = (Integer) yearComboBox.getSelectedItem();
-                int month = monthComboBox.getSelectedIndex() + 1;
-                int dayOfMonth = dayComboBox.getSelectedIndex() + 1;
-                int hour = Integer.parseInt(hourField.getText());
-                int minute = Integer.parseInt(minuteField.getText());
-
-                if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-                    throw new NumberFormatException();
+                LocalDateTime date = getEventDateTime();
+                if (date == null) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Kérlek, adj meg érvényes számokat az órához, perchez, vagy résztvevők számához.",
+                            "Hiba",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
                 }
 
-                LocalDateTime date = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
-                boolean isOnline = isOnlineCheckBox.isSelected();
-
-                EventModel newEvent = new EventModel(name, location, date, isOnline, description, attendeesCount);
+                EventModel newEvent = createEventModel(date);
                 eventService.createEvent(newEvent);
 
                 JOptionPane.showMessageDialog(this, "Esemény sikeresen hozzáadva!");
                 parentUI.fillTableWithEvents();
                 this.dispose();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Kérlek, adj meg érvényes számokat az órához, perchez, vagy résztvevők számához.",
-                        "Hiba",
-                        JOptionPane.ERROR_MESSAGE
-                );
-            } catch (Exception ex) {
+            } catch (ServiceException ex) {
                 JOptionPane.showMessageDialog(this,
                         "Hiba történt az esemény létrehozásakor: " + ex.getMessage(),
                         "Hiba",
@@ -122,6 +96,29 @@ public class AddEventUI extends JFrame {
             }
         });
 
+        addUIComponents();
+        this.setVisible(true);
+    }
+
+    private void initializeUIComponents() {
+        nameField = new JTextField();
+        locationField = new JTextField();
+        descriptionArea = new JTextArea();
+        attendeesCountField = new JTextField();
+
+        yearComboBox = new JComboBox<>();
+        monthComboBox = new JComboBox<>();
+        dayComboBox = new JComboBox<>();
+
+        hourField = new JTextField();
+        minuteField = new JTextField();
+
+        onlineEventCheckBox = new JCheckBox("Online esemény");
+
+        saveButton = new JButton("Mentés");
+    }
+
+    private void addUIComponents() {
         this.add(new JLabel("Esemény neve:"));
         this.add(nameField);
         this.add(new JLabel("Helyszín:"));
@@ -145,8 +142,42 @@ public class AddEventUI extends JFrame {
         this.add(new JLabel("Perc:"));
         this.add(minuteField);
 
-        this.add(isOnlineCheckBox);
+        this.add(onlineEventCheckBox);
         this.add(saveButton);
-        this.setVisible(true);
+    }
+
+    private boolean areFieldsValid() {
+        return !nameField.getText().isEmpty()
+                && !locationField.getText().isEmpty()
+                && !descriptionArea.getText().isEmpty()
+                && !attendeesCountField.getText().isEmpty();
+    }
+
+    private LocalDateTime getEventDateTime() {
+        try {
+            int year = (Integer) yearComboBox.getSelectedItem();
+            int month = monthComboBox.getSelectedIndex() + 1;
+            int dayOfMonth = dayComboBox.getSelectedIndex() + 1;
+            int hour = Integer.parseInt(hourField.getText());
+            int minute = Integer.parseInt(minuteField.getText());
+
+            if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+                return null;
+            }
+
+            return LocalDateTime.of(year, month, dayOfMonth, hour, minute);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private EventModel createEventModel(LocalDateTime date) {
+        String name = nameField.getText();
+        String location = locationField.getText();
+        String description = descriptionArea.getText();
+        int attendeesCount = Integer.parseInt(attendeesCountField.getText());
+        boolean isOnline = onlineEventCheckBox.isSelected();
+
+        return new EventModel(name, location, date, isOnline, description, attendeesCount);
     }
 }

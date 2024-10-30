@@ -16,7 +16,7 @@ public abstract class DaoFactory {
             return instance;
         }
 
-        ConfigType config = Config.getConfig();
+        ConfigType config = Config.getConfigData();
         if ("mem".equals(config.getType())) {
             log.info("Using in memory implementation.");
             instance = new MemoryDaoFactory();

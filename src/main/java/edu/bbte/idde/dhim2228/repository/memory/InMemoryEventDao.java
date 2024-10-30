@@ -6,11 +6,12 @@ import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryEventDao implements EventDao {
-    private final ConcurrentHashMap<Long, EventModel> events = new ConcurrentHashMap<>();
+    private final Map<Long, EventModel> events = new ConcurrentHashMap<>();
     private final AtomicLong counter = new AtomicLong(0);
 
     @Override

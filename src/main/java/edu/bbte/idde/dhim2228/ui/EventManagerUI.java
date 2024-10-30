@@ -17,6 +17,7 @@ public class EventManagerUI extends JFrame implements EventManager {
     private final DefaultTableModel tableModel;
 
     public EventManagerUI() {
+        super();
         this.eventService = ServiceFactory.getInstance().getEventService();
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -108,7 +109,7 @@ public class EventManagerUI extends JFrame implements EventManager {
             String eventName = eventsTable.getValueAt(selectedRow, 0).toString();
             String eventLocation = eventsTable.getValueAt(selectedRow, 1).toString();
             String eventDate = eventsTable.getValueAt(selectedRow, 2).toString();
-            boolean isOnline = eventsTable.getValueAt(selectedRow, 3).toString().equals("igen");
+            boolean isOnline = "igen".equals(eventsTable.getValueAt(selectedRow, 3).toString());
             String eventDescription = eventsTable.getValueAt(selectedRow, 4).toString();
             int attendeesCount = Integer.parseInt(eventsTable.getValueAt(selectedRow, 5).toString());
 

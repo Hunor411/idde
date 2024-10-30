@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.sql.Timestamp.valueOf;
+
 @Slf4j
 public class JdbcEventDao implements EventDao {
     private EventModel getEventFromResultSet(ResultSet resultSet) throws SQLException {
@@ -77,7 +79,7 @@ public class JdbcEventDao implements EventDao {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
-            stmt.setTimestamp(3, java.sql.Timestamp.valueOf(event.getDate()));
+            stmt.setTimestamp(3, valueOf(event.getDate()));
             stmt.setBoolean(4, event.getIsOnline());
             stmt.setString(5, event.getDescription());
             stmt.setInt(6, event.getAttendeesCount());
@@ -99,7 +101,7 @@ public class JdbcEventDao implements EventDao {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
-            stmt.setTimestamp(3, java.sql.Timestamp.valueOf(event.getDate()));
+            stmt.setTimestamp(3, valueOf(event.getDate()));
             stmt.setBoolean(4, event.getIsOnline());
             stmt.setString(5, event.getDescription());
             stmt.setInt(6, event.getAttendeesCount());

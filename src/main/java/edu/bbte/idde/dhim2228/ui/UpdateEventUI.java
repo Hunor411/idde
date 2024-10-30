@@ -13,21 +13,18 @@ import java.time.format.DateTimeParseException;
 
 public class UpdateEventUI extends JFrame {
     private final EventService eventService;
-    private final EventManager parentUI;
-    private final Long eventId;
     JTextField nameField;
     JTextField locationField;
     JTextField dateField;
     JTextArea descriptionArea;
     JTextField attendeesCountField;
-    JCheckBox isOnlineCheckBox;
+    JCheckBox onlineEventCheckBox;
 
     public UpdateEventUI(EventManager parentUI, Long eventId, String eventName,
                          String eventLocation, String eventDate, boolean isOnline, String eventDescription,
                          int attendeesCount) {
+        super();
         this.eventService = ServiceFactory.getInstance().getEventService();
-        this.parentUI = parentUI;
-        this.eventId = eventId;
 
         this.setTitle("Esemény módosítása");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -39,7 +36,7 @@ public class UpdateEventUI extends JFrame {
         dateField = new JTextField(eventDate);
         descriptionArea = new JTextArea(eventDescription);
         attendeesCountField = new JTextField(String.valueOf(attendeesCount));
-        isOnlineCheckBox = new JCheckBox("Online", isOnline);
+        onlineEventCheckBox = new JCheckBox("Online", isOnline);
 
         JButton saveButton = new JButton("Mentés");
         saveButton.addActionListener(e -> {
@@ -61,7 +58,7 @@ public class UpdateEventUI extends JFrame {
                 return;
             }
 
-            boolean online = isOnlineCheckBox.isSelected();
+            boolean online = onlineEventCheckBox.isSelected();
 
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -103,7 +100,7 @@ public class UpdateEventUI extends JFrame {
         this.add(new JLabel("Résztvevők száma:"));
         this.add(attendeesCountField);
 
-        this.add(isOnlineCheckBox);
+        this.add(onlineEventCheckBox);
         this.add(saveButton);
 
         this.setVisible(true);
