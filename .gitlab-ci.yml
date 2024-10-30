@@ -8,7 +8,7 @@ lint:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   script:
     # lint and compile projects
-    - gradle build --console=verbose --no-daemon
+    - gradle build --console=plain --no-daemon
   cache:
     paths:
       - .gradle
