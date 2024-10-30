@@ -6,6 +6,7 @@ import lombok.Data;
 public class ConfigType {
     private String type;
     private String jdbcUrl;
+    private String driverClass;
     private String username;
     private String password;
 }

@@ -12,10 +12,10 @@ public class ConnectionManager {
         if (dataSource == null) {
             dataSource = new HikariDataSource();
             dataSource.setJdbcUrl(config.getJdbcUrl());
+            dataSource.setDriverClassName(config.getDriverClass());
             dataSource.setUsername(config.getUsername());
             dataSource.setPassword(config.getPassword());
             dataSource.setMaximumPoolSize(10);
-            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         }
         return dataSource;
     }

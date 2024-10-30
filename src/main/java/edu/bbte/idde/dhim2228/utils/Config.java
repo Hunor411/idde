@@ -1,6 +1,5 @@
 package edu.bbte.idde.dhim2228.utils;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ public class Config {
         ConfigType copy = new ConfigType();
         copy.setType(configData.getType());
         copy.setJdbcUrl(configData.getJdbcUrl());
+        copy.setDriverClass(configData.getDriverClass());
         copy.setUsername(configData.getUsername());
         copy.setPassword(configData.getPassword());
         return copy;
@@ -37,13 +37,10 @@ public class Config {
 
                 configData.setType(properties.getProperty("database.type"));
                 if ("jdbc".equals(configData.getType())) {
-                    Dotenv dotenv = Dotenv.load();
-                    String username = dotenv.get("DB_USERNAME");
-                    String password = dotenv.get("DB_PASSWORD");
-
                     configData.setJdbcUrl(properties.getProperty("jdbc.url"));
-                    configData.setUsername(username);
-                    configData.setPassword(password);
+                    configData.setUsername(properties.getProperty("jdbc.username"));
+                    configData.setPassword(properties.getProperty("jdbc.password"));
+                    configData.setDriverClass(properties.getProperty("jdbc.driverClass"));
                 }
             }
         } catch (IOException e) {
