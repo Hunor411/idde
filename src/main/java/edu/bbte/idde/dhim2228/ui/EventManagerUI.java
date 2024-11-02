@@ -4,12 +4,14 @@ import edu.bbte.idde.dhim2228.model.EventModel;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.ServiceFactory;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 
 public class EventManagerUI extends JFrame implements EventManager {
     private final EventService eventService;
@@ -124,7 +126,16 @@ public class EventManagerUI extends JFrame implements EventManager {
 
     @Override
     public final void fillTableWithEvents() {
-        Collection<EventModel> events = eventService.getAllEvents();
+        Collection<EventModel> events = List.of();
+        try {
+            events = eventService.getAllEvents();
+        } catch (ServiceException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Hiba",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
         tableModel.setRowCount(0);
 
         if (events.isEmpty()) {
