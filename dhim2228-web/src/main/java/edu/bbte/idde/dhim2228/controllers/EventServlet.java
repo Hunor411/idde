@@ -1,7 +1,6 @@
-package edu.bbte.idde.dhim2228.servlet;
+package edu.bbte.idde.dhim2228.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.bbte.idde.dhim2228.repository.DaoFactory;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.ServiceFactory;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
@@ -30,9 +29,10 @@ public class EventServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+
         try {
             var events = eventService.getAllEvents();
-            resp.setContentType("application/json");
             objectMapper.writeValue(resp.getWriter(), events);
         } catch (ServiceException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
