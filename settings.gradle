@@ -1,1 +1,5 @@
 rootProject.name = 'dhim2228-idde'
+
+include 'dhim2228-backend'
+//include 'dhim2228-desktop'
+include 'dhim2228-web'

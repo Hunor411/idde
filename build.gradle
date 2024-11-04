@@ -1,29 +1,20 @@
-plugins {
-    id 'java'
-    id 'application'
-}
+subprojects {
+    apply plugin: 'java'
+    apply from: "$rootDir/lint.gradle"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 
-repositories {
-    mavenCentral()
-}
+    repositories {
+        mavenCentral()
+    }
 
-dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'ch.qos.logback:logback-classic:1.5.11'
-    implementation 'com.zaxxer:HikariCP:6.0.0'
-    runtimeOnly 'com.mysql:mysql-connector-j:9.1.0'
-}
-
-apply from: 'lint.gradle'
-
-application {
-    // a main metódust tartalmazó osztály megjelölése
-    mainClass = 'edu.bbte.idde.dhim2228.Main'
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+        implementation 'org.slf4j:slf4j-api:1.7.25'
+        implementation 'ch.qos.logback:logback-classic:1.5.11'
+    }
 }

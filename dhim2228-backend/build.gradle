@@ -1,0 +1,4 @@
+dependencies {
+    implementation 'com.zaxxer:HikariCP:6.0.0'
+    runtimeOnly 'com.mysql:mysql-connector-j:9.1.0'
+}
