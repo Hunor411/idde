@@ -46,19 +46,13 @@ public class InMemoryEventDao implements EventDao {
     @Override
     public void updateEvent(Long id, EventModel event) throws RepositoryException {
         log.info("Updating event with id: {}", id);
-        EventModel oldEvent = getEventById(id);
-        if (oldEvent == null) {
+        if (!events.containsKey(id)) {
             log.error("Updating event with id {} failed", id);
-            throw new RepositoryException("Event with id " + event.getId() + " not found");
+            throw new RepositoryException("Event with id " + id + " not found");
         }
 
-        oldEvent.setName(event.getName());
-        oldEvent.setDate(event.getDate());
-        oldEvent.setLocation(event.getLocation());
-        oldEvent.setIsOnline(event.getIsOnline());
-        oldEvent.setAttendeesCount(event.getAttendeesCount());
-        oldEvent.setDescription(event.getDescription());
-        events.put(id, oldEvent);
+        events.put(id, event);
+        log.info("Event with id {} updated successfully", id);
     }
 
     @Override
