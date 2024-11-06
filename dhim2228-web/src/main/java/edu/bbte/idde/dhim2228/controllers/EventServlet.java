@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Slf4j
 @WebServlet("/events")
@@ -44,7 +43,7 @@ public class EventServlet extends HttpServlet {
         ObjectNode json = objectMapper.createObjectNode();
         json.put("message", message);
 
-        objectMapper.writeValue(resp.getWriter(), message);
+        objectMapper.writeValue(resp.getWriter(), json);
     }
 
     private void sendInvalidNumberFormatError(HttpServletResponse resp, String method) throws IOException {
@@ -86,9 +85,83 @@ public class EventServlet extends HttpServlet {
             }
 
             var events = eventService.getAllEvents();
-            objectMapper.writeValue(resp.getWriter(), objectMapper.convertValue(events, ArrayList.class));
+            objectMapper.writeValue(resp.getWriter(), events);
         } catch (NumberFormatException e) {
             sendInvalidNumberFormatError(resp, req.getMethod());
+        } catch (ServiceException e) {
+            sendServerError(resp, req.getMethod());
+        }
+    }
+
+    private boolean validEvent(EventModel event) {
+        return event.getName() != null
+                && event.getLocation() != null
+                && event.getDate() != null
+                && event.getIsOnline() != null
+                && event.getDescription() != null
+                && event.getAttendeesCount() != null;
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+
+        try {
+            EventModel event = objectMapper.readValue(req.getReader(), EventModel.class);
+            if (!validEvent(event)) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                sendErrorJson(resp, "Invalid object!");
+                log.error("POST /events {} error: Invalid object", HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
+            eventService.createEvent(event);
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            sendMessageJson(resp, "Event successfully created");
+        } catch (IOException e) {
+            log.error("POST /events IOException: Error reading request data", e);
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            sendErrorJson(resp, "Error reading request data.");
+        } catch (ServiceException e) {
+            sendServerError(resp, req.getMethod());
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+
+        try {
+            String idString = req.getParameter("id");
+            if (idString == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                sendErrorJson(resp, "Missing id");
+                return;
+            }
+
+            Long id = Long.parseLong(idString);
+            if (eventService.getEventById(id) == null) {
+                sendNotFoundError(resp, req.getMethod(), id);
+                return;
+            }
+
+            EventModel event = objectMapper.readValue(req.getReader(), EventModel.class);
+            if (!validEvent(event)) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                sendErrorJson(resp, "Invalid object!");
+                log.error("PUT /events {} error: Invalid object", HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
+            eventService.updateEvent(id, event);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            sendMessageJson(resp, "Event successfully updated");
+        } catch (NumberFormatException e) {
+            sendInvalidNumberFormatError(resp, req.getMethod());
+        } catch (IOException e) {
+            log.error("PUT /events IOException: Error reading request data", e);
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            sendErrorJson(resp, "Error reading request data.");
         } catch (ServiceException e) {
             sendServerError(resp, req.getMethod());
         }
@@ -110,6 +183,7 @@ public class EventServlet extends HttpServlet {
 
             if (eventService.getEventById(id) == null) {
                 sendNotFoundError(resp, req.getMethod(), id);
+                return;
             }
 
             eventService.deleteEvent(id);

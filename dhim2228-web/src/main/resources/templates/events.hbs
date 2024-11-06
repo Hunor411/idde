@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="./style.css" rel="stylesheet">
+        <title>Events</title>
+    </head>
+    <body>
+        <div class="container">
+            {{#each events}}
+                <div class="event">
+                    <p>Event ID: {{id}}</p>
+                    <p>Event Name: {{name}}</p>
+                    <p>Event location: {{location}}</p>
+                    <p>Event date: {{date}}</p>
+                    <p>Event online: {{isOnline}}</p>
+                    <p>Event description: {{description}}</p>
+                    <p>Event attendees: {{attendeesCount}}</p>
+                </div>
+            {{/each}}
+        </div>
+    </body>
+</html>
