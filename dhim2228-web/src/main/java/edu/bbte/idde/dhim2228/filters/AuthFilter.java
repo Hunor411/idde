@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/events-template")
+@WebFilter("/events-template")
 public class AuthFilter extends HttpFilter {
     private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);
 
@@ -34,5 +34,4 @@ public class AuthFilter extends HttpFilter {
         log.info("User '{}' accessed {}", username, req.getRequestURI());
         chain.doFilter(req, res);
     }
-
 }
