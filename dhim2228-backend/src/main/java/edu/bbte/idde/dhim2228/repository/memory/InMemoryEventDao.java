@@ -17,14 +17,9 @@ public class InMemoryEventDao implements EventDao {
     private final AtomicLong counter = new AtomicLong(0);
 
     @Override
-    public EventModel getEventById(Long id) throws RepositoryException {
+    public EventModel getEventById(Long id) {
         log.info("Getting event by id: {}", id);
-        EventModel event = events.get(id);
-        if (event == null) {
-            log.error("Getting event by id {} failed", id);
-            throw new RepositoryException("Event with id " + id + " not found");
-        }
-        return event;
+        return events.get(id);
     }
 
     @Override

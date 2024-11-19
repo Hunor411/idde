@@ -15,8 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -46,7 +48,13 @@ public class EventServletTemplate extends HttpServlet {
             log.info("GET /events-template {}", HttpServletResponse.SC_OK);
         } catch (ServiceException e) {
             log.info("GET /events-template {}", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            Map<String, Object> errorMap = new ConcurrentHashMap<>();
+            errorMap.put("error", "An error occurred while fetching events. Please try again later.");
+
+            Template template = handlebars.compile("events");
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            template.apply(errorMap, resp.getWriter());
         }
     }
 }

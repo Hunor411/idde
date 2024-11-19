@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link href="./style.css" rel="stylesheet">
-        <title>Events</title>
-    </head>
-    <body>
-        <div class="container">
-            {{#each events}}
-                <div class="event">
-                    <p>Event ID: {{id}}</p>
-                    <p>Event Name: {{name}}</p>
-                    <p>Event location: {{location}}</p>
-                    <p>Event date: {{date}}</p>
-                    <p>Event online: {{isOnline}}</p>
-                    <p>Event description: {{description}}</p>
-                    <p>Event attendees: {{attendeesCount}}</p>
-                </div>
-            {{/each}}
+<head>
+    <link href="./style.css" rel="stylesheet">
+    <title>Events</title>
+</head>
+<body>
+<div class="container">
+    {{#if error}}
+        <div class="error-message">
+            <p>{{error}}</p>
         </div>
+    {{else}}
+        {{#each events}}
+            <div class="event">
+                <p>Event ID: {{id}}</p>
+                <p>Event Name: {{name}}</p>
+                <p>Event Location: {{location}}</p>
+                <p>Event Date: {{date}}</p>
+                <p>Event Online: {{isOnline}}</p>
+                <p>Event Description: {{description}}</p>
+                <p>Event Attendees: {{attendeesCount}}</p>
+            </div>
+        {{/each}}
+    {{/if}}
+</div>
 
-    <div>
-        <form action="logout" method="post">
-            <input type="submit" value="Logout">
-        </form>
-    </div>
-    </body>
+<div>
+    <form action="logout" method="post">
+        <input type="submit" value="Logout">
+    </form>
+</div>
+</body>
 </html>
