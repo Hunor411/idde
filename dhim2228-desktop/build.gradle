@@ -1,0 +1,11 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':dhim2228-backend')
+}
+
+application {
+    mainClass = 'edu.bbte.idde.dhim2228.Main'
+}

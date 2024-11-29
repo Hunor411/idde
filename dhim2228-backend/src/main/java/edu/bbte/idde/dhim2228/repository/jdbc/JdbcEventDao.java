@@ -96,7 +96,7 @@ public class JdbcEventDao implements EventDao {
         log.info("Updating event with id: {}", id);
         try (Connection conn = ConnectionManager.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count =?"
+                     "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count=? "
                              + "WHERE id=?")) {
 
             stmt.setString(1, event.getName());
