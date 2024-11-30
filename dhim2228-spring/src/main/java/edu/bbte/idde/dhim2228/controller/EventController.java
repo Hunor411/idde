@@ -46,4 +46,10 @@ public class EventController {
         eventService.update(id, eventMapper.toEntityDto(eventRequestDto));
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

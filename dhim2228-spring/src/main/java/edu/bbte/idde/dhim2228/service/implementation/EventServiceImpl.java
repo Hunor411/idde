@@ -48,7 +48,6 @@ public class EventServiceImpl implements EventService {
     public void update(Long id, Event event) {
         try {
             checkExistsEventById(id);
-
             event.setId(id);
             eventRepository.updateEvent(id, event);
         } catch (RepositoryException e) {
@@ -86,7 +85,6 @@ public class EventServiceImpl implements EventService {
     public void deleteById(Long id) {
         try {
             checkExistsEventById(id);
-
             eventRepository.deleteEvent(id);
         } catch (RepositoryException e) {
             log.error("Error while deleting event with id: {}", id, e);
