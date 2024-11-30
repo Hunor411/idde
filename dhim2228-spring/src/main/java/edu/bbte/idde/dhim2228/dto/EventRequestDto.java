@@ -16,6 +16,7 @@ public class EventRequestDto {
     @Size(min = 3, max = 30)
     private String location;
 
+    @NotNull
     @DateTimeFormat
     private String date;
 

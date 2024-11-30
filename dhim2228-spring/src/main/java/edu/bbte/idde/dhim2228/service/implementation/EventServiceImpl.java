@@ -31,9 +31,25 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    private void checkExistsEventById(Long id) {
+        try {
+            Event event = eventRepository.getEventById(id);
+            if (event == null) {
+                log.warn("Event with id {} not found.", id);
+                throw new NotFoundException("Event not found with id: " + id);
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while retrieving event with id: {}", id, e);
+            throw new ServiceException("Error retrieving event with id: " + id, e);
+        }
+    }
+
     @Override
     public void update(Long id, Event event) {
         try {
+            checkExistsEventById(id);
+
+            event.setId(id);
             eventRepository.updateEvent(id, event);
         } catch (RepositoryException e) {
             log.error("Error while updating event with id: {}", id, e);
@@ -69,6 +85,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public void deleteById(Long id) {
         try {
+            checkExistsEventById(id);
+
             eventRepository.deleteEvent(id);
         } catch (RepositoryException e) {
             log.error("Error while deleting event with id: {}", id, e);
