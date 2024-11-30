@@ -1,7 +1,6 @@
 package edu.bbte.idde.dhim2228.controlleradvice;
 
-import edu.bbte.idde.dhim2228.controller.exceptions.ErrorResponse;
-import edu.bbte.idde.dhim2228.controller.exceptions.NotFoundException;
+import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

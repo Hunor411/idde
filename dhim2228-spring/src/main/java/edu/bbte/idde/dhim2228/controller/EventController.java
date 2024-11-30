@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -23,33 +23,33 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<Void> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
-        eventService.create(eventMapper.toEntityDto(eventRequestDto));
+        eventService.save(eventRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public List<EventResponseDto> getAllEvents() {
+    public ResponseEntity<Collection<EventResponseDto>> getAllEvents() {
         log.info("Get all events");
-        return eventMapper.toResponseDtoList(eventService.findAll());
+        return ResponseEntity.ok(eventService.getAllEvents());
     }
 
     @GetMapping("/{id}")
-    public EventResponseDto getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventResponseDto> getEventById(@PathVariable Long id) {
         log.info("Get event by id: {}", id);
-        return eventMapper.toResponseDto(eventService.findById(id));
+        return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateEvent(
             @PathVariable Long id,
             @Valid @RequestBody EventRequestDto eventRequestDto) {
-        eventService.update(id, eventMapper.toEntityDto(eventRequestDto));
+        eventService.update(id, eventRequestDto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        eventService.deleteById(id);
+        eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
 }
