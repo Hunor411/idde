@@ -4,4 +4,7 @@ plugins {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:3.4.0'
+
+    implementation 'com.zaxxer:HikariCP:6.0.0'
+    runtimeOnly 'com.mysql:mysql-connector-j:9.1.0'
 }
