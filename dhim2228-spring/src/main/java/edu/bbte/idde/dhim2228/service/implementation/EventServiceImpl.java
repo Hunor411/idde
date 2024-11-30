@@ -4,6 +4,7 @@ import edu.bbte.idde.dhim2228.model.Event;
 import edu.bbte.idde.dhim2228.repository.EventRepository;
 import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 import edu.bbte.idde.dhim2228.service.EventService;
+import edu.bbte.idde.dhim2228.controller.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event findById(Long id) {
         try {
-            return eventRepository.getEventById(id);
+            Event event = eventRepository.getEventById(id);
+            if (event == null) {
+                log.error("Error while retrieving event with id: {}", id);
+                throw new NotFoundException("Event not found with id: " + id);
+            }
+            return event;
         } catch (RepositoryException e) {
             log.error("Error while getting event by id: {}", id, e);
             throw new ServiceException("Error getting event by id: " + id, e);
