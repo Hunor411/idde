@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:3.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.4.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.0'
 
     implementation 'org.mapstruct:mapstruct:1.6.3'
