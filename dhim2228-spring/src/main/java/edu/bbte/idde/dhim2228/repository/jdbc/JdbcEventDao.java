@@ -1,7 +1,7 @@
 package edu.bbte.idde.dhim2228.repository.jdbc;
 
 import edu.bbte.idde.dhim2228.model.Event;
-import edu.bbte.idde.dhim2228.repository.EventDao;
+import edu.bbte.idde.dhim2228.repository.EventRepository;
 import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import static java.sql.Timestamp.valueOf;
 @Repository
 @Profile("prod")
 @RequiredArgsConstructor
-public class JdbcEventDao implements EventDao {
+public class JdbcEventDao implements EventRepository {
     private final ConnectionManager connectionManager;
 
     private Event getEventFromResultSet(ResultSet resultSet) throws SQLException {

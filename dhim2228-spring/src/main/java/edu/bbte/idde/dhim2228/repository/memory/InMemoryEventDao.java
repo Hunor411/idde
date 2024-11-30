@@ -1,7 +1,7 @@
 package edu.bbte.idde.dhim2228.repository.memory;
 
 import edu.bbte.idde.dhim2228.model.Event;
-import edu.bbte.idde.dhim2228.repository.EventDao;
+import edu.bbte.idde.dhim2228.repository.EventRepository;
 import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Repository
 @Profile("dev")
-public class InMemoryEventDao implements EventDao {
+public class InMemoryEventDao implements EventRepository {
     private final Map<Long, Event> events = new ConcurrentHashMap<>();
     private final AtomicLong counter = new AtomicLong(0);
 

@@ -5,7 +5,7 @@ import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 
 import java.util.Collection;
 
-public interface EventDao {
+public interface EventRepository {
     Event getEventById(Long id) throws RepositoryException;
 
     Collection<Event> getAllEvents() throws RepositoryException;
