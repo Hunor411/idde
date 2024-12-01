@@ -2,7 +2,6 @@ package edu.bbte.idde.dhim2228.controller;
 
 import edu.bbte.idde.dhim2228.dto.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.EventResponseDto;
-import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
-    private final EventMapper eventMapper;
 
     @PostMapping
     public ResponseEntity<Void> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
@@ -51,5 +49,18 @@ public class EventController {
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Collection<EventResponseDto>> searchEvents(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String location
+    ) {
+        return ResponseEntity.ok(eventService.searchEvents(name, location));
+    }
+
+    @GetMapping("/closest")
+    public ResponseEntity<EventResponseDto> getClosestEvent() {
+        return ResponseEntity.ok(eventService.findClosestEvent());
     }
 }

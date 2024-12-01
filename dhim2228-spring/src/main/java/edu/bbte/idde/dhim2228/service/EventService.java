@@ -17,5 +17,7 @@ public interface EventService {
 
     void deleteEvent(Long id) throws ServiceException;
 
+    Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException;
+
     EventResponseDto findClosestEvent() throws ServiceException;
 }

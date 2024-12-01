@@ -34,6 +34,15 @@ public class InMemoryEventDao implements EventRepository {
     }
 
     @Override
+    public Collection<Event> searchEvents(String name, String location) throws RepositoryException {
+        log.info("Searching events by name: {} and location: {}", name, location);
+        return events.values().stream()
+                .filter(event -> name == null || event.getName().equalsIgnoreCase(name))
+                .filter(event -> location == null || event.getLocation().equalsIgnoreCase(location))
+                .toList();
+    }
+
+    @Override
     public void createEvent(Event event) {
         log.info("Creating event: {}", event);
         Long newId = counter.incrementAndGet();

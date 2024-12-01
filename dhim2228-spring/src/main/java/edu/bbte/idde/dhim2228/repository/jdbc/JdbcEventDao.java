@@ -78,6 +78,47 @@ public class JdbcEventDao implements EventRepository {
     }
 
     @Override
+    public Collection<Event> searchEvents(String name, String location) throws RepositoryException {
+        log.info("Searching events by name: {} and location: {}", name, location);
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM events WHERE 1=1");
+        List<Object> parameters = new ArrayList<>();
+
+        if (name != null) {
+            queryBuilder.append(" AND name = ?");
+            parameters.add(name);
+        }
+
+        if (location != null) {
+            queryBuilder.append(" AND location = ?");
+            parameters.add(location);
+        }
+
+        try (Connection conn = connectionManager.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(queryBuilder.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            ResultSet resultSet = stmt.executeQuery();
+            List<Event> events = new ArrayList<>();
+            Event eventModel = getEventFromResultSet(resultSet);
+            while (eventModel != null) {
+                events.add(eventModel);
+                eventModel = getEventFromResultSet(resultSet);
+            }
+
+            return events;
+
+        } catch (SQLException e) {
+            log.error("Searching events by name and location failed", e);
+            throw new RepositoryException("Searching events failed: ", e);
+        }
+    }
+
+
+    @Override
     public void createEvent(Event event) {
         log.info("Creating event: {}", event);
         try (Connection conn = connectionManager.getDataSource().getConnection();

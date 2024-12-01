@@ -98,6 +98,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException {
+        return eventMapper.toResponseDtoList(eventRepository.searchEvents(name, location));
+    }
+
+    @Override
     public EventResponseDto findClosestEvent() {
         log.info("Fetching the closest upcoming event...");
         try {
