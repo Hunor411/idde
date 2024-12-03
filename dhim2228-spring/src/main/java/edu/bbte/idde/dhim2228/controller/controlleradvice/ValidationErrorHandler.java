@@ -1,4 +1,4 @@
-package edu.bbte.idde.dhim2228.controlleradvice;
+package edu.bbte.idde.dhim2228.controller.controlleradvice;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

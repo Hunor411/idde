@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.Collection;
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
@@ -16,5 +15,5 @@ public interface EventMapper {
 
     EventResponseDto toResponseDto(Event entity);
 
-    List<EventResponseDto> toResponseDtoList(Collection<Event> entities);
+    Collection<EventResponseDto> toResponseDtoList(Collection<Event> entities);
 }

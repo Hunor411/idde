@@ -1,4 +1,4 @@
-package edu.bbte.idde.dhim2228.controlleradvice;
+package edu.bbte.idde.dhim2228.controller.controlleradvice;
 
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package edu.bbte.idde.dhim2228.controlleradvice;
+package edu.bbte.idde.dhim2228.controller.controlleradvice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
