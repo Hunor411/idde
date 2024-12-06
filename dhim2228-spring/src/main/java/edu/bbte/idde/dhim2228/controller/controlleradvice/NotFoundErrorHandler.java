@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class NotFoundErrorHandler {
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(
