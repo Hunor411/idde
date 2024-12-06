@@ -20,11 +20,13 @@ public class EventRequestDto {
     @DateTimeFormat
     private String date;
 
+    @NotNull
     private Boolean isOnline;
 
     @Size(max = 500)
     private String description;
 
+    @NotNull
     @Positive
     private Integer attendeesCount;
 }

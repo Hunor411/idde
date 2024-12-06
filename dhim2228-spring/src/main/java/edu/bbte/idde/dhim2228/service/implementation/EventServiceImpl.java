@@ -99,7 +99,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException {
-        return eventMapper.toResponseDtoList(eventRepository.searchEvents(name, location));
+        Collection<Event> events = eventRepository.searchEvents(name, location);
+        if (events == null || events.isEmpty()) {
+            throw new NotFoundException("No events found for the given name and location.");
+        }
+
+        return eventMapper.toResponseDtoList(events);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class NotFoundErrorHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(
-                e.getMessage(),
+                e.getMessage().lines().toList(),
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
