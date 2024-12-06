@@ -115,6 +115,10 @@ public class EventServiceImpl implements EventService {
                     .filter(event -> event.getDate().isAfter(LocalDateTime.now()))
                     .min(Comparator.comparing(Event::getDate))
                     .orElse(null);
+            if (closestEvent == null) {
+                throw new NotFoundException("No closest upcoming event.");
+            }
+
             return eventMapper.toResponseDto(closestEvent);
         } catch (RepositoryException e) {
             log.error("Error while fetching closest upcoming event", e);
