@@ -7,7 +7,7 @@ import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 import java.util.Collection;
 
 public interface EventService {
-    void save(EventRequestDto eventRequestDto) throws ServiceException;
+    Long save(EventRequestDto eventRequestDto) throws ServiceException;
 
     void update(Long id, EventRequestDto eventRequestDto) throws ServiceException;
 

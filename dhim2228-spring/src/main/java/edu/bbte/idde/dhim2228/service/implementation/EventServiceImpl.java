@@ -26,9 +26,9 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     @Override
-    public void save(EventRequestDto eventRequestDto) throws ServiceException {
+    public Long save(EventRequestDto eventRequestDto) throws ServiceException {
         try {
-            eventRepository.createEvent(eventMapper.toEntityDto(eventRequestDto));
+            return eventRepository.createEvent(eventMapper.toEntityDto(eventRequestDto));
         } catch (RepositoryException e) {
             log.error("Error while creating event: {}", eventRequestDto, e);
             throw new ServiceException("Error creating event", e);
