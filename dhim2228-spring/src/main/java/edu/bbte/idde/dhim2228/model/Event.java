@@ -8,9 +8,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
+@Entity
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Entity
 @Table(name = "events")
 public class Event extends BaseEntity {
     @Column(name = "name")

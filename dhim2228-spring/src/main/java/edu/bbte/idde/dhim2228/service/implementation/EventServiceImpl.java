@@ -1,7 +1,7 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
-import edu.bbte.idde.dhim2228.dto.EventRequestDto;
-import edu.bbte.idde.dhim2228.dto.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.Event;
 import edu.bbte.idde.dhim2228.repository.EventRepository;

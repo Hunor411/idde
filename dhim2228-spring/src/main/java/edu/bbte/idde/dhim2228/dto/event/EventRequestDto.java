@@ -1,4 +1,4 @@
-package edu.bbte.idde.dhim2228.dto;
+package edu.bbte.idde.dhim2228.dto.event;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

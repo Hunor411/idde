@@ -1,8 +1,7 @@
 package edu.bbte.idde.dhim2228.service;
 
-import edu.bbte.idde.dhim2228.dto.EventRequestDto;
-import edu.bbte.idde.dhim2228.dto.EventResponseDto;
-import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
+import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 
 import java.util.Collection;
 
