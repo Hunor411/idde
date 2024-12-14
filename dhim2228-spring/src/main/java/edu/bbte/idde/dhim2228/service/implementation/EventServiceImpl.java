@@ -5,7 +5,6 @@ import edu.bbte.idde.dhim2228.dto.EventResponseDto;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.Event;
 import edu.bbte.idde.dhim2228.repository.EventRepository;
-import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,79 +26,55 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Long save(EventRequestDto eventRequestDto) throws ServiceException {
-        try {
-            return eventRepository.createEvent(eventMapper.toEntityDto(eventRequestDto));
-        } catch (RepositoryException e) {
-            log.error("Error while creating event: {}", eventRequestDto, e);
-            throw new ServiceException("Error creating event", e);
-        }
+        log.info("Saving event: {}", eventRequestDto);
+        return eventRepository.save(eventMapper.toEntityDto(eventRequestDto)).getId();
     }
 
     private void checkExistsEventById(Long id) {
-        try {
-            Event event = eventRepository.getEventById(id);
-            if (event == null) {
-                log.warn("Event with id {} not found.", id);
-                throw new NotFoundException("Event not found with id: " + id);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while retrieving event with id: {}", id, e);
-            throw new ServiceException("Error retrieving event with id: " + id, e);
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty()) {
+            log.warn("Event with id {} not found.", id);
+            throw new NotFoundException("Event not found with id: " + id);
         }
     }
 
     @Override
     public void update(Long id, EventRequestDto eventRequestDto) {
-        try {
-            checkExistsEventById(id);
-            Event eventToUpdate = eventMapper.toEntityDto(eventRequestDto);
-            eventToUpdate.setId(id);
-            eventRepository.updateEvent(id, eventToUpdate);
-        } catch (RepositoryException e) {
-            log.error("Error while updating event with id: {}", id, e);
-            throw new ServiceException("Error updating event with id: " + id, e);
-        }
+        log.info("Updating event: {}", eventRequestDto);
+        checkExistsEventById(id);
+        Event eventToUpdate = eventMapper.toEntityDto(eventRequestDto);
+        eventToUpdate.setId(id);
+        eventRepository.save(eventToUpdate);
     }
 
     @Override
     public Collection<EventResponseDto> getAllEvents() {
-        try {
-            return eventMapper.toResponseDtoList(new ArrayList<>(eventRepository.getAllEvents()));
-        } catch (RepositoryException e) {
-            log.error("Error while retrieving all events", e);
-            throw new ServiceException("Error retrieving all events", e);
-        }
+        log.info("Getting all events");
+        return eventMapper.toResponseDtoList(new ArrayList<>(eventRepository.findAll()));
     }
 
     @Override
     public EventResponseDto getEventById(Long id) {
-        try {
-            Event event = eventRepository.getEventById(id);
-            if (event == null) {
-                log.error("Error while retrieving event with id: {}", id);
-                throw new NotFoundException("Event not found with id: " + id);
-            }
-            return eventMapper.toResponseDto(event);
-        } catch (RepositoryException e) {
-            log.error("Error while getting event by id: {}", id, e);
-            throw new ServiceException("Error getting event by id: " + id, e);
+        log.info("Getting event with id: {}", id);
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty()) {
+            log.warn("Event with id {} not found.", id);
+            throw new NotFoundException("Event not found with id: " + id);
         }
+        return eventMapper.toResponseDto(event.get());
     }
 
     @Override
     public void deleteEvent(Long id) {
-        try {
-            checkExistsEventById(id);
-            eventRepository.deleteEvent(id);
-        } catch (RepositoryException e) {
-            log.error("Error while deleting event with id: {}", id, e);
-            throw new ServiceException("Error deleting event with id: " + id, e);
-        }
+        log.info("Deleting event with id: {}", id);
+        checkExistsEventById(id);
+        eventRepository.deleteById(id);
     }
 
     @Override
     public Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException {
-        Collection<Event> events = eventRepository.searchEvents(name, location);
+        Collection<Event> events = eventRepository
+                .findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(name, location);
         if (events == null || events.isEmpty()) {
             throw new NotFoundException("No events found for the given name and location.");
         }
@@ -110,19 +85,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponseDto findClosestEvent() {
         log.info("Fetching the closest upcoming event...");
-        try {
-            Event closestEvent = eventRepository.getAllEvents().stream()
-                    .filter(event -> event.getDate().isAfter(LocalDateTime.now()))
-                    .min(Comparator.comparing(Event::getDate))
-                    .orElse(null);
-            if (closestEvent == null) {
-                throw new NotFoundException("No closest upcoming event.");
-            }
-
-            return eventMapper.toResponseDto(closestEvent);
-        } catch (RepositoryException e) {
-            log.error("Error while fetching closest upcoming event", e);
-            throw new ServiceException("Error while fetching closest upcoming event", e);
+        Optional<Event> closestEvent = eventRepository.findFirstByDateAfterOrderByDateAsc(LocalDateTime.now());
+        if (closestEvent.isEmpty()) {
+            log.warn("Closest event not found");
+            throw new NotFoundException("Closest event not found");
         }
+
+        return eventMapper.toResponseDto(closestEvent.get());
     }
 }

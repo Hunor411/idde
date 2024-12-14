@@ -1,20 +1,16 @@
 package edu.bbte.idde.dhim2228.repository;
 
 import edu.bbte.idde.dhim2228.model.Event;
-import edu.bbte.idde.dhim2228.repository.exceptions.RepositoryException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
-public interface EventRepository {
-    Event getEventById(Long id) throws RepositoryException;
+@Repository
+public interface EventRepository extends JpaRepository<Event, Long> {
+    Collection<Event> findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(String name, String location);
 
-    Collection<Event> getAllEvents() throws RepositoryException;
-
-    Collection<Event> searchEvents(String name, String location) throws RepositoryException;
-
-    Long createEvent(Event event) throws RepositoryException;
-
-    void updateEvent(Long id, Event event) throws RepositoryException;
-
-    void deleteEvent(Long id)  throws RepositoryException;
+    Optional<Event> findFirstByDateAfterOrderByDateAsc(LocalDateTime date);
 }
