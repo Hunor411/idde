@@ -11,6 +11,7 @@ import java.util.Collection;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "passwordHash", ignore = true)
     User toEntity(UserRequestDto userRequestDto);
 
     UserResponseDto toResponseDto(User user);

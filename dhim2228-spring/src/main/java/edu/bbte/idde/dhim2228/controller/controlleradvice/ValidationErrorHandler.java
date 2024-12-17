@@ -32,8 +32,6 @@ public class ValidationErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         log.debug("MethodArgumentNotValidException occurred", e);
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        e.getBindingResult().getFieldErrors().forEach(System.out::println);
         List<String> errors = e.getBindingResult().getFieldErrors().stream()
                 .map(it -> it.getField() + " " + it.getDefaultMessage()).toList();
 
