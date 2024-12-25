@@ -2,6 +2,7 @@ package edu.bbte.idde.dhim2228.service.implementation;
 
 import edu.bbte.idde.dhim2228.dto.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.Event;
 import edu.bbte.idde.dhim2228.repository.EventRepository;
@@ -26,9 +27,9 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     @Override
-    public void save(EventRequestDto eventRequestDto) throws ServiceException {
+    public Long save(EventRequestDto eventRequestDto) throws ServiceException {
         try {
-            eventRepository.createEvent(eventMapper.toEntityDto(eventRequestDto));
+            return eventRepository.createEvent(eventMapper.toEntityDto(eventRequestDto));
         } catch (RepositoryException e) {
             log.error("Error while creating event: {}", eventRequestDto, e);
             throw new ServiceException("Error creating event", e);
@@ -62,9 +63,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventResponseDto> getAllEvents() {
+    public Collection<EventShortResponseDto> getAllEvents() {
         try {
-            return eventMapper.toResponseDtoList(new ArrayList<>(eventRepository.getAllEvents()));
+            return eventMapper.toShortResponseDtoList(new ArrayList<>(eventRepository.getAllEvents()));
         } catch (RepositoryException e) {
             log.error("Error while retrieving all events", e);
             throw new ServiceException("Error retrieving all events", e);
@@ -98,13 +99,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException {
+    public Collection<EventShortResponseDto> searchEvents(String name, String location) throws ServiceException {
         Collection<Event> events = eventRepository.searchEvents(name, location);
         if (events == null || events.isEmpty()) {
             throw new NotFoundException("No events found for the given name and location.");
         }
 
-        return eventMapper.toResponseDtoList(events);
+        return eventMapper.toShortResponseDtoList(events);
     }
 
     @Override
