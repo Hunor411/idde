@@ -12,7 +12,6 @@ import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,7 +67,6 @@ public class EventServiceImpl implements EventService {
             log.warn("Event with id {} not found.", id);
             throw new NotFoundException("Event not found with id: " + id);
         }
-        System.out.println(event.get());
         return eventMapper.toResponseDto(event.get());
     }
 
