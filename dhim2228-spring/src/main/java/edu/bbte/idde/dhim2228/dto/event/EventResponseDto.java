@@ -1,9 +1,17 @@
 package edu.bbte.idde.dhim2228.dto.event;
 
-import edu.bbte.idde.dhim2228.model.Event;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class EventResponseDto extends Event {}
+public class EventResponseDto {
+    private Long id;
+    private String name;
+    private String location;
+    private LocalDateTime date;
+    private Boolean isOnline;
+    private String description;
+    private List<EventUserDetailsResponseDto> attendees;
+}

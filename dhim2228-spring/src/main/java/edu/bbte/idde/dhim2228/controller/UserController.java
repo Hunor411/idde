@@ -2,6 +2,7 @@ package edu.bbte.idde.dhim2228.controller;
 
 import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.dto.user.UserResponseDto;
+import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import edu.bbte.idde.dhim2228.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.Collection;
 
-@RestController
+@RestController()
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<UserResponseDto>> getAllUsers() {
+    public ResponseEntity<Collection<UserShortResponseDto>> getAllUsers() {
         return ResponseEntity.ok(userService.findAllUser());
     }
 

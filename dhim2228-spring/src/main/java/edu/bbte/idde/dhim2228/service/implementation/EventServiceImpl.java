@@ -1,13 +1,18 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
+import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
-import edu.bbte.idde.dhim2228.model.Event;
+import edu.bbte.idde.dhim2228.model.*;
+import edu.bbte.idde.dhim2228.repository.AttendeeRepository;
 import edu.bbte.idde.dhim2228.repository.EventRepository;
+import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+    private final AttendeeRepository attendeeRepository;
+    private final UserRepository userRepository;
     private final EventMapper eventMapper;
 
     @Override
@@ -48,9 +55,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventResponseDto> getAllEvents() {
+    public Collection<EventShortResponseDto> getAllEvents() {
         log.info("Getting all events");
-        return eventMapper.toResponseDtoList(new ArrayList<>(eventRepository.findAll()));
+        return eventMapper.toShortResponseDtoList(new ArrayList<>(eventRepository.findAll()));
     }
 
     @Override
@@ -61,6 +68,7 @@ public class EventServiceImpl implements EventService {
             log.warn("Event with id {} not found.", id);
             throw new NotFoundException("Event not found with id: " + id);
         }
+        System.out.println(event.get());
         return eventMapper.toResponseDto(event.get());
     }
 
@@ -72,14 +80,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventResponseDto> searchEvents(String name, String location) throws ServiceException {
+    public Collection<EventShortResponseDto> searchEvents(String name, String location) throws ServiceException {
         Collection<Event> events = eventRepository
                 .findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(name, location);
         if (events == null || events.isEmpty()) {
             throw new NotFoundException("No events found for the given name and location.");
         }
 
-        return eventMapper.toResponseDtoList(events);
+        return eventMapper.toShortResponseDtoList(events);
     }
 
     @Override
@@ -92,5 +100,20 @@ public class EventServiceImpl implements EventService {
         }
 
         return eventMapper.toResponseDto(closestEvent.get());
+    }
+
+    @Override
+    public void addUserToEvent(Long eventId, AttendeeRequestDto data) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found with id: " + eventId));
+        User user = userRepository.findById(data.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + data.getUserId()));
+
+        Attendee attendee = new Attendee();
+        attendee.setEvent(event);
+        attendee.setUser(user);
+        attendee.setRole(data.getRole());
+
+        attendeeRepository.save(attendee);
     }
 }

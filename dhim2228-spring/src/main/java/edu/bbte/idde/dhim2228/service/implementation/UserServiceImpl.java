@@ -2,6 +2,7 @@ package edu.bbte.idde.dhim2228.service.implementation;
 
 import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.dto.user.UserResponseDto;
+import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import edu.bbte.idde.dhim2228.mapper.UserMapper;
 import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.repository.UserRepository;
@@ -62,9 +63,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<UserResponseDto> findAllUser() {
+    public Collection<UserShortResponseDto> findAllUser() {
         log.info("Finding all users");
-        return userMapper.toResponseDtoList(userRepository.findAll());
+        return userMapper.toShortResponseDtoList(userRepository.findAll());
     }
 
     @Override

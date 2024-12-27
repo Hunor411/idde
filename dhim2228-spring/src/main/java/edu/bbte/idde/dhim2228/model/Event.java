@@ -1,11 +1,10 @@
 package edu.bbte.idde.dhim2228.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,4 +29,7 @@ public class Event extends BaseEntity {
 
     @Column(name = "attendees_count")
     private Integer attendeesCount;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<Attendee> attendees;
 }

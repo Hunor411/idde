@@ -8,9 +8,6 @@ import lombok.Data;
 @Data
 public class AttendeeRequestDto {
     @NotNull
-    private Long eventId;
-
-    @NotNull
     private Long userId;
 
     @NotNull

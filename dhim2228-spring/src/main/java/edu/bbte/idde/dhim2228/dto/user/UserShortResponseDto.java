@@ -2,12 +2,9 @@ package edu.bbte.idde.dhim2228.dto.user;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class UserResponseDto {
+public class UserShortResponseDto {
     private Long id;
     private String username;
     private String email;
-    private List<UserEventDetailsResponseDto> events;
 }

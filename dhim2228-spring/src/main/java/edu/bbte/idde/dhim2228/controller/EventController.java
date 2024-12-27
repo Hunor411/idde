@@ -1,7 +1,10 @@
 package edu.bbte.idde.dhim2228.controller;
 
+import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +30,7 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<EventResponseDto>> getAllEvents(
+    public ResponseEntity<Collection<EventShortResponseDto>> getAllEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String location
     ) {
@@ -61,5 +64,11 @@ public class EventController {
     @GetMapping("/closest")
     public ResponseEntity<EventResponseDto> getClosestEvent() {
         return ResponseEntity.ok(eventService.findClosestEvent());
+    }
+
+    @PostMapping("{id}/users")
+    public ResponseEntity<Void> addUserToEvent(@PathVariable Long id, @RequestBody AttendeeRequestDto attendeeRequestDto) {
+        eventService.addUserToEvent(id, attendeeRequestDto);
+        return ResponseEntity.ok().build();
     }
 }
