@@ -72,8 +72,15 @@ public class EventController {
         return ResponseEntity.ok().build();
     }
 
+//    projekthez elfogadni es torolni a meghivast, majd a jwt token alapjan
     @PatchMapping("{id}/invitations/accept")
     public ResponseEntity<Void> acceptInvitation(@PathVariable Long id) {
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("{id}/invitations/decline")
+    public ResponseEntity<Void> declineInvitation(@PathVariable Long id) {
 
         return ResponseEntity.noContent().build();
     }

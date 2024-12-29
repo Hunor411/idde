@@ -1,6 +1,7 @@
 package edu.bbte.idde.dhim2228.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,20 +9,24 @@ import lombok.ToString;
 
 @Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "attendees")
-public class Attendee extends BaseEntity {
+public class Attendee {
+    @EmbeddedId
+    private AttendeeId id;
+
     @ManyToOne
+    @MapsId("eventId")
     @ToString.Exclude
     @JsonIgnore
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @ManyToOne
+    @MapsId("userId")
     @ToString.Exclude
     @JsonIgnore
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)

@@ -12,15 +12,14 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AttendeeMapper {
 
-    @Mapping(target = "eventId", source = "event.id")
+    @Mapping(target = "eventId", source = "id.eventId")
     @Mapping(target = "role", source = "role")
     @Mapping(target = "status", source = "userStatus")
     UserEventDetailsResponseDto toUserEventDetailsResponseDto(Attendee attendee);
 
     List<UserEventDetailsResponseDto> toUserEventDetailsResponseDtoList(Collection<Attendee> attendees);
 
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "userId", source = "id.userId")
     @Mapping(target = "role", source = "role")
     @Mapping(target = "status", source = "userStatus")
     EventUserDetailsResponseDto toEventUserDetailsResponseDto(Attendee attendee);

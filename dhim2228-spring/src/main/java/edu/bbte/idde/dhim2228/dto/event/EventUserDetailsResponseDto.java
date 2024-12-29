@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class EventUserDetailsResponseDto {
-    private Long id;
     private Long userId;
     private Role role;
     private Status status;
