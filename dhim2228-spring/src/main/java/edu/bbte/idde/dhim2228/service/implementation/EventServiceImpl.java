@@ -4,6 +4,8 @@ import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventUserDetailsResponseDto;
+import edu.bbte.idde.dhim2228.mapper.AttendeeMapper;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.*;
 import edu.bbte.idde.dhim2228.repository.AttendeeRepository;
@@ -12,6 +14,7 @@ import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
+import edu.bbte.idde.dhim2228.service.exceptions.UserAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class EventServiceImpl implements EventService {
     private final AttendeeRepository attendeeRepository;
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
+    private final AttendeeMapper attendeeMapper;
 
     @Override
     public Long save(EventRequestDto eventRequestDto) throws ServiceException {
@@ -106,6 +110,11 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Event not found with id: " + eventId));
         User user = userRepository.findById(data.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + data.getUserId()));
+        var exists = attendeeRepository.findByEventIdAndUserId(eventId, data.getUserId());
+        if (exists != null) {
+            throw new UserAlreadyExistException("User with id " + data.getUserId() + " is already part of event with id " + eventId);
+        }
+        log.info("Adding user {} to event with id: {}", data.getUserId(), eventId);
 
         Attendee attendee = new Attendee();
         attendee.setEvent(event);
@@ -113,5 +122,46 @@ public class EventServiceImpl implements EventService {
         attendee.setRole(data.getRole());
 
         attendeeRepository.save(attendee);
+    }
+
+    @Override
+    public void acceptInvitation(Long eventId, Long userId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found with id: " + eventId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        Attendee attendee = attendeeRepository.findByEventIdAndUserId(eventId, userId);
+        if (attendee == null) {
+            throw new NotFoundException("User with id " + userId + " has no invitation for event with id " + eventId);
+        }
+
+        if (attendee.getUserStatus() == Status.ACCEPTED) {
+            throw new IllegalStateException("User has already accepted the invitation.");
+        }
+
+        attendee.setUserStatus(Status.ACCEPTED);
+        attendeeRepository.save(attendee);
+    }
+
+    @Override
+    public Collection<EventUserDetailsResponseDto> getEventUsers(Long id) {
+        log.info("Fetching users with id: {}", id);
+        Collection<Attendee> attendees = attendeeRepository.findAllByEventId(id);
+        return attendeeMapper.toEventUserDetailsResponseDtoList(attendeeRepository.findAllByEventId(id));
+    }
+
+    @Override
+    public void deleteUserFromEvent(Long eventId, Long userId) {
+        checkExistsEventById(eventId);
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        log.info("Deleting user {} from event with id: {}", userId, eventId);
+
+        var attendee = attendeeRepository.findByEventIdAndUserId(eventId, userId);
+        if (attendee == null) {
+            throw new NotFoundException("User with id " + userId + " is not part of event with id " + eventId);
+        }
+
+        attendeeRepository.deleteByEventIdAndUserId(eventId, userId);
     }
 }

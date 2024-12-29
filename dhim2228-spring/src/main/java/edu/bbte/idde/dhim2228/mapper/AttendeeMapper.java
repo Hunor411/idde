@@ -6,6 +6,7 @@ import edu.bbte.idde.dhim2228.model.Attendee;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.Collection;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -16,7 +17,7 @@ public interface AttendeeMapper {
     @Mapping(target = "status", source = "userStatus")
     UserEventDetailsResponseDto toUserEventDetailsResponseDto(Attendee attendee);
 
-    List<UserEventDetailsResponseDto> toUserEventDetailsResponseDtoList(List<Attendee> attendees);
+    List<UserEventDetailsResponseDto> toUserEventDetailsResponseDtoList(Collection<Attendee> attendees);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "userId", source = "user.id")
@@ -24,5 +25,5 @@ public interface AttendeeMapper {
     @Mapping(target = "status", source = "userStatus")
     EventUserDetailsResponseDto toEventUserDetailsResponseDto(Attendee attendee);
 
-    List<EventUserDetailsResponseDto> toEventUserDetailsResponseDtoList(List<Attendee> attendees);
+    List<EventUserDetailsResponseDto> toEventUserDetailsResponseDtoList(Collection<Attendee> attendees);
 }

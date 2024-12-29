@@ -4,6 +4,7 @@ import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventUserDetailsResponseDto;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -65,9 +66,26 @@ public class EventController {
         return ResponseEntity.ok(eventService.findClosestEvent());
     }
 
-    @PostMapping("{id}/users")
-    public ResponseEntity<Void> addUserToEvent(@PathVariable Long id, @RequestBody AttendeeRequestDto attendeeRequestDto) {
+    @PostMapping("{id}/invitations")
+    public ResponseEntity<Void> addUserToEvent(@PathVariable Long id, @RequestBody @Valid AttendeeRequestDto attendeeRequestDto) {
         eventService.addUserToEvent(id, attendeeRequestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("{id}/invitations/accept")
+    public ResponseEntity<Void> acceptInvitation(@PathVariable Long id) {
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("{id}/invitations")
+    public ResponseEntity<Collection<EventUserDetailsResponseDto>> getEventUsers(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getEventUsers(id));
+    }
+
+    @DeleteMapping("{eventId}/invitations/{userId}")
+    public ResponseEntity<Void> deleteUserFromEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+        eventService.deleteUserFromEvent(eventId, userId);
+        return ResponseEntity.noContent().build();
     }
 }
