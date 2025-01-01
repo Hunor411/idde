@@ -43,12 +43,13 @@ public class InMemoryEventDao implements EventRepository {
     }
 
     @Override
-    public void createEvent(Event event) {
+    public Long createEvent(Event event) {
         log.info("Creating event: {}", event);
         Long newId = counter.incrementAndGet();
         event.setId(newId);
         events.put(newId, event);
         log.info("Event {} created", events);
+        return newId;
     }
 
     @Override

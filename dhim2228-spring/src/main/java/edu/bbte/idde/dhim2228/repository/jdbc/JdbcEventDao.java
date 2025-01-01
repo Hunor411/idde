@@ -44,7 +44,7 @@ public class JdbcEventDao implements EventRepository {
         log.info("Getting event by id: {}", id);
         try (Connection conn = connectionManager.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM events WHERE id=?")) {
+                     "SELECT * FROM events WHERE id=?")) {
 
             stmt.setLong(1, id);
 
@@ -119,12 +119,12 @@ public class JdbcEventDao implements EventRepository {
 
 
     @Override
-    public void createEvent(Event event) {
+    public Long createEvent(Event event) {
         log.info("Creating event: {}", event);
         try (Connection conn = connectionManager.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "INSERT INTO events(name, location, date, is_online, description, attendees_count)"
-                             + "VALUES(?, ?, ?, ?, ?, ?)")) {
+                             + "VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
@@ -133,7 +133,19 @@ public class JdbcEventDao implements EventRepository {
             stmt.setString(5, event.getDescription());
             stmt.setInt(6, event.getAttendeesCount());
 
-            stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new RepositoryException("Creating event failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                } else {
+                    throw new RepositoryException("Creating event failed, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
             log.error("Creating event failed {}: ", event, e);
             throw new RepositoryException("Creating event failed: ", e);

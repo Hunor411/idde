@@ -12,7 +12,7 @@ public interface EventRepository {
 
     Collection<Event> searchEvents(String name, String location) throws RepositoryException;
 
-    void createEvent(Event event) throws RepositoryException;
+    Long createEvent(Event event) throws RepositoryException;
 
     void updateEvent(Long id, Event event) throws RepositoryException;
 

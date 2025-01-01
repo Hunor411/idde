@@ -2,32 +2,47 @@ package edu.bbte.idde.dhim2228.controller;
 
 import edu.bbte.idde.dhim2228.dto.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Collection;
 
 @Slf4j
 @RestController
 @RequestMapping("api/events")
 @RequiredArgsConstructor
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowedHeaders = "*",
+        exposedHeaders = "*",
+        maxAge = 3600,
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}
+)
 public class EventController {
     private final EventService eventService;
 
     @PostMapping
-    public ResponseEntity<Void> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
-        eventService.save(eventRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
+        Long id = eventService.save(eventRequestDto);
+        URI createUri = URI.create("/api/events/" + id);
+        return ResponseEntity.created(createUri).build();
     }
 
     @GetMapping
-    public ResponseEntity<Collection<EventResponseDto>> getAllEvents() {
-        log.info("Get all events");
+    public ResponseEntity<Collection<EventShortResponseDto>> getAllEvents(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String location
+    ) {
+        if (name != null || location != null) {
+            return ResponseEntity.ok(eventService.searchEvents(name, location));
+        }
+
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
@@ -49,14 +64,6 @@ public class EventController {
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Collection<EventResponseDto>> searchEvents(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String location
-    ) {
-        return ResponseEntity.ok(eventService.searchEvents(name, location));
     }
 
     @GetMapping("/closest")
