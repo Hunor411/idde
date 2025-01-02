@@ -14,6 +14,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
+    @Mapping(target = "events", ignore = true)
     User toEntity(UserRequestDto userRequestDto);
 
     UserShortResponseDto toShortResponseDto(User user);

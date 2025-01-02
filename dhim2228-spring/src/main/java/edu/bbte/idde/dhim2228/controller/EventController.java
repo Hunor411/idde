@@ -67,12 +67,15 @@ public class EventController {
     }
 
     @PostMapping("{id}/invitations")
-    public ResponseEntity<Void> addUserToEvent(@PathVariable Long id, @RequestBody @Valid AttendeeRequestDto attendeeRequestDto) {
+    public ResponseEntity<Void> addUserToEvent(
+            @PathVariable Long id,
+            @RequestBody @Valid AttendeeRequestDto attendeeRequestDto
+    ) {
         eventService.addUserToEvent(id, attendeeRequestDto);
         return ResponseEntity.ok().build();
     }
 
-//    projekthez elfogadni es torolni a meghivast, majd a jwt token alapjan
+    // projekthez elfogadni es torolni a meghivast, majd a jwt token alapjan
     @PatchMapping("{id}/invitations/accept")
     public ResponseEntity<Void> acceptInvitation(@PathVariable Long id) {
 

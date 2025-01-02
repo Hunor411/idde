@@ -15,7 +15,6 @@ import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 import edu.bbte.idde.dhim2228.service.exceptions.UserAlreadyExistException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

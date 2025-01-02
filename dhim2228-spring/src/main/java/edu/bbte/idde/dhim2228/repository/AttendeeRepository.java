@@ -14,6 +14,7 @@ import java.util.Collection;
 public interface AttendeeRepository extends JpaRepository<Attendee, AttendeeId> {
     Collection<Attendee> findAllByEventId(Long eventId);
 
+    @Override
     @Modifying
     @Query("DELETE FROM Attendee a WHERE a.id = :id")
     void deleteById(@NonNull AttendeeId id);

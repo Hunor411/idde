@@ -1,10 +1,8 @@
 package edu.bbte.idde.dhim2228.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data

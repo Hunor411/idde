@@ -12,6 +12,7 @@ import java.util.Collection;
 @Mapper(componentModel = "spring", uses = AttendeeMapper.class)
 public interface EventMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "attendees", ignore = true)
     Event toEntityDto(EventRequestDto dto);
 
     @Mapping(target = "attendees", source = "attendees")

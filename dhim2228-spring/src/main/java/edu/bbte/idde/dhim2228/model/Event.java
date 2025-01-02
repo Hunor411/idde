@@ -27,9 +27,6 @@ public class Event extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "attendees_count")
-    private Integer attendeesCount;
-
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Attendee> attendees;
 }
