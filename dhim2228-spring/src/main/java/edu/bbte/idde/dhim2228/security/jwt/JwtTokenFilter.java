@@ -1,12 +1,12 @@
 package edu.bbte.idde.dhim2228.security.jwt;
 
-import edu.bbte.idde.dhim2228.dto.user.UserResponseDto;
 import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,40 +27,35 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
-        try {
-            log.info("Incoming request: [Method: {}, URI: {}, IP: {}]",
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        log.info("Incoming request: [Method: {}, URI: {}, IP: {}]",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr());
+
+        String jwtToken = jwtutils.getJwtFromCookies(request);
+        if (jwtToken != null && !jwtToken.isBlank() && jwtutils.validateJwtToken(jwtToken)) {
+            String username = jwtutils.getUsernameFromJwtToken(jwtToken);
+            User user = userService.loadUserByUsername(username);
+            log.info("User '{}' is attempting to access '{}' with authorities: {}",
+                    username,
+                    request.getRequestURI(),
+                    user.getAuthorities());
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    user.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            log.warn("No valid JWT token found for request: [Method: {} URI: {}, IP: {}]",
                     request.getMethod(),
                     request.getRequestURI(),
                     request.getRemoteAddr());
-
-            String jwtToken = jwtutils.getJwtFromCookies(request);
-            if (jwtToken != null && !jwtToken.isBlank() && jwtutils.validateJwtToken(jwtToken)) {
-                String username = jwtutils.getUsernameFromJwtToken(jwtToken);
-
-                User user = userService.loadUserByUsername(username);
-                log.info("User '{}' is attempting to access '{}' with authorities: {}",
-                        username,
-                        request.getRequestURI(),
-                        user.getAuthorities());
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        user.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                log.warn("No valid JWT token found for request: [Method: {} URI: {}, IP: {}]",
-                        request.getMethod(),
-                        request.getRequestURI(),
-                        request.getRemoteAddr());
-            }
-        } catch (Exception e) {
-            log.error("Failed to process authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

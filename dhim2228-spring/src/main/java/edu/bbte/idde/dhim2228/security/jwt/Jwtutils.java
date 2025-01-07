@@ -42,14 +42,18 @@ public class Jwtutils {
         return Jwts.builder()
                 .subject(user.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .expiration(new Date(new Date().getTime() + jwtExpirationMs))
                 .signWith(key())
                 .compact();
     }
 
     public ResponseCookie generateJwtCookie(User user) {
         String jwt = generateJwtTokenFromUser(user);
-        return ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(MAX_AGE_SEC).httpOnly(true).build();
+        return ResponseCookie.from(jwtCookie, jwt)
+                .path("/")
+                .maxAge(MAX_AGE_SEC)
+                .httpOnly(true)
+                .build();
     }
 
     public boolean validateJwtToken(String token) {
@@ -78,7 +82,11 @@ public class Jwtutils {
     }
 
     public ResponseCookie getCleanJwtCookie() {
-        return ResponseCookie.from(jwtCookie, null).path("/").build();
+        return ResponseCookie.from(jwtCookie, "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .build();
     }
 
     public String getUsernameFromJwtToken(String token) {
