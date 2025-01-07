@@ -28,11 +28,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long save(UserRequestDto userRequestDto) {
         log.info("Saving user: {}", userRequestDto);
-        if (userRepository.findByUsername(userRequestDto.getUsername()) != null) {
+        if (userRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
             log.error("Username {} already exists", userRequestDto.getUsername());
             throw new UserAlreadyExistException("Username already exists");
         }
-        if (userRepository.findByEmail(userRequestDto.getEmail()) != null) {
+        if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             log.error("Email {} already exists", userRequestDto.getEmail());
             throw new UserAlreadyExistException("Email already exists");
         }
@@ -84,5 +84,17 @@ public class UserServiceImpl implements UserService {
         log.info("Deleting user by id: {}", id);
         checkExistsUserById(id);
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User loadUserByUsername(String username) {
+        log.info("Loading user by username: {}", username);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            log.warn("User with username {} not found", username);
+            throw new NotFoundException("User with username " + username + " not found");
+        }
+
+        return user.get();
     }
 }
