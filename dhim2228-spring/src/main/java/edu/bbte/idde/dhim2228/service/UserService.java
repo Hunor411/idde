@@ -23,4 +23,6 @@ public interface UserService extends UserDetailsService {
 
     @Override
     User loadUserByUsername(String username);
+
+    UserResponseDto getAuthenticatedUser();
 }

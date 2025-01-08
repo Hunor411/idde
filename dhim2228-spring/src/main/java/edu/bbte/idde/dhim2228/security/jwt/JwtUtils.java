@@ -17,12 +17,12 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Slf4j
 @Component
-public class Jwtutils {
+public class JwtUtils {
     private static final int MAX_AGE_SEC = 24 * 60 * 60;
 
     @Value("${jwtSecret}")
@@ -34,7 +34,7 @@ public class Jwtutils {
     @Value("${jwtCookieName}")
     private String jwtCookie;
 
-    private Key key() {
+    private SecretKey key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
@@ -58,7 +58,10 @@ public class Jwtutils {
 
     public boolean validateJwtToken(String token) {
         try {
-            Jwts.parser().setSigningKey(key()).build().parse(token);
+            Jwts.parser()
+                    .verifyWith(key())
+                    .build()
+                    .parse(token);
             return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token", e);
@@ -90,6 +93,11 @@ public class Jwtutils {
     }
 
     public String getUsernameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .verifyWith(key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 }

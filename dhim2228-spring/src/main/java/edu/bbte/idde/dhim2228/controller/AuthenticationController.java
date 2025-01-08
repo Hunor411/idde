@@ -1,6 +1,8 @@
 package edu.bbte.idde.dhim2228.controller;
 
+import edu.bbte.idde.dhim2228.dto.user.UserEventDetailsResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserLoginRequestDto;
+import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

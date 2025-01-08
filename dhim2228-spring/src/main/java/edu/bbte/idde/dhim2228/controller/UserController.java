@@ -35,6 +35,11 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getAuthenticatedUser() {
+        return ResponseEntity.ok(userService.getAuthenticatedUser());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto user) {
         userService.update(id, user);
