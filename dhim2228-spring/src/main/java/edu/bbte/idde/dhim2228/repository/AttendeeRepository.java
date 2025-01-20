@@ -8,14 +8,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-
 @Repository
 public interface AttendeeRepository extends JpaRepository<Attendee, AttendeeId> {
-    Collection<Attendee> findAllByEventId(Long eventId);
-
     @Override
     @Modifying
-    @Query("DELETE FROM Attendee a WHERE a.id = :id")
-    void deleteById(@NonNull AttendeeId id);
+    @Query("DELETE FROM Attendee a WHERE a = :attendee")
+    void delete(@NonNull Attendee attendee);
 }
