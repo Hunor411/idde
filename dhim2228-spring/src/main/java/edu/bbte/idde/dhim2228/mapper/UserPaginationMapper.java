@@ -1,7 +1,6 @@
 package edu.bbte.idde.dhim2228.mapper;
 
 import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
-import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

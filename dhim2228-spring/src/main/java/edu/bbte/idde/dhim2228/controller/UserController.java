@@ -1,17 +1,20 @@
 package edu.bbte.idde.dhim2228.controller;
 
+import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.dto.user.UserResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import edu.bbte.idde.dhim2228.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Collection;
 
 @RestController()
 @RequestMapping("/api/users")
@@ -28,8 +31,9 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Collection<UserShortResponseDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAllUser());
+    public ResponseEntity<PaginatedResponseDto<UserShortResponseDto>> getAllUsers(
+            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(userService.findAllUser(pageable));
     }
 
     @GetMapping("/{id}")

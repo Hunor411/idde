@@ -1,9 +1,11 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
+import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.dto.user.UserResponseDto;
 import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import edu.bbte.idde.dhim2228.mapper.UserMapper;
+import edu.bbte.idde.dhim2228.mapper.UserPaginationMapper;
 import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.UserService;
@@ -11,12 +13,13 @@ import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.UserAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
@@ -26,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserPaginationMapper userPaginationMapper;
 
     @Override
     public Long save(UserRequestDto userRequestDto) {
@@ -65,9 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<UserShortResponseDto> findAllUser() {
+    public PaginatedResponseDto<UserShortResponseDto> findAllUser(Pageable pageable) {
         log.info("Finding all users");
-        return userMapper.toShortResponseDtoList(userRepository.findAll());
+        Page<User> usersPage = userRepository.findAll(pageable);
+        Page<UserShortResponseDto> shortResponseDtos = userMapper.toShortDtoList(usersPage);
+        return userPaginationMapper.toPaginatedResponse(shortResponseDtos);
     }
 
     @Override

@@ -4,12 +4,10 @@ import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
-import edu.bbte.idde.dhim2228.mapper.EventPaginationMapper;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,7 +23,6 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
-    private final EventPaginationMapper eventPaginationMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -41,7 +38,7 @@ public class EventController {
             @RequestParam(required = false, defaultValue = "") String location,
             @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        Page<EventShortResponseDto> events;
+        PaginatedResponseDto<EventShortResponseDto> events;
 
         if (name != null || location != null) {
             events = eventService.searchEvents(name, location, pageable);
@@ -49,7 +46,7 @@ public class EventController {
             events = eventService.getAllEvents(pageable);
         }
 
-        return ResponseEntity.ok(eventPaginationMapper.toPaginatedResponse(events));
+        return ResponseEntity.ok(events);
     }
 
     @GetMapping("/{id}")

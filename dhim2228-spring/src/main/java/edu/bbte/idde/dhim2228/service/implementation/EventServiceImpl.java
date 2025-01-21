@@ -1,9 +1,11 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
+import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
+import edu.bbte.idde.dhim2228.mapper.EventPaginationMapper;
 import edu.bbte.idde.dhim2228.model.*;
 import edu.bbte.idde.dhim2228.repository.AttendeeRepository;
 import edu.bbte.idde.dhim2228.repository.EventFilterRepository;
@@ -19,8 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
@@ -30,6 +30,7 @@ public class EventServiceImpl implements EventService {
     private final EventFilterRepository eventRepository;
     private final AttendeeRepository attendeeRepository;
     private final EventMapper eventMapper;
+    private final EventPaginationMapper eventPaginationMapper;
 
     @Override
     public Long save(EventRequestDto eventRequestDto) throws ServiceException {
@@ -71,9 +72,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventShortResponseDto> getAllEvents(Pageable pageable) {
+    public PaginatedResponseDto<EventShortResponseDto> getAllEvents(Pageable pageable) {
         log.info("Getting all events");
-        return eventMapper.toShortResponseDtoList(eventRepository.findAll(pageable));
+        Page<Event> eventsPage = eventRepository.findAll(pageable);
+        Page<EventShortResponseDto> shortResponseDto = eventMapper.toShortResponseDtoList(eventsPage);
+        return eventPaginationMapper.toPaginatedResponse(shortResponseDto);
     }
 
     @Override
@@ -92,7 +95,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventShortResponseDto> searchEvents(String name, String location, Pageable pageable) throws ServiceException {
+    public PaginatedResponseDto<EventShortResponseDto> searchEvents(String name, String location, Pageable pageable)
+            throws ServiceException {
         Page<Event> events = eventRepository
                 .findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(name, location, pageable);
 
@@ -100,7 +104,7 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException("No events found for the given name and location.");
         }
 
-        return eventMapper.toShortResponseDtoList(events);
+        return eventPaginationMapper.toPaginatedResponse(eventMapper.toShortResponseDtoList(events));
     }
 
     @Override
