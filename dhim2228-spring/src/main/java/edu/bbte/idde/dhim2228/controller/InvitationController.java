@@ -44,7 +44,7 @@ public class InvitationController {
     }
 
     @GetMapping("{id}/invitations")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("@securityServiceImpl.hasAcces(authentication, #id)")
     public ResponseEntity<Collection<EventUserDetailsResponseDto>> getEventUsers(@PathVariable Long id) {
         return ResponseEntity.ok(invitationService.getEventUsers(id));
     }
