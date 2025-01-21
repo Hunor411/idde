@@ -23,7 +23,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseCookie login(UserLoginRequestDto userLoginRequestDto) {
-        try{
+        try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             userLoginRequestDto.getUsername(),

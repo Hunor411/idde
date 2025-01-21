@@ -66,17 +66,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponseDto getEventById(Long id) {
         log.info("Getting event with id: {}", id);
-        Optional<Event> event = eventRepository.findById(id);
-        if (event.isEmpty()) {
-            log.warn("Event with id {} not found.", id);
-            throw new NotFoundException("Event not found with id: " + id);
-        }
-        return eventMapper.toResponseDto(event.get());
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        return eventMapper.toResponseDto(event);
     }
 
     @Override
     public void deleteEvent(Long id) {
-        log.info("Deleting event with id: {}", id);
+        log.warn("Deleting event with id {}", id);
         checkExistsEventById(id);
         eventRepository.deleteById(id);
     }

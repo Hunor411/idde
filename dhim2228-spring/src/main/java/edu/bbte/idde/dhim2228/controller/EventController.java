@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,6 +24,7 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Long> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
         Long id = eventService.save(eventRequestDto);
         URI createUri = URI.create("/api/events/" + id);
@@ -42,12 +44,13 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("@securityServiceImpl.hasAcces(authentication, #id)")
     public ResponseEntity<EventResponseDto> getEventById(@PathVariable Long id) {
-        log.info("Get event by id: {}", id);
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@securityServiceImpl.hasAccesAdmin(authentication, #id)")
     public ResponseEntity<Void> updateEvent(
             @PathVariable Long id,
             @Valid @RequestBody EventRequestDto eventRequestDto) {
@@ -56,6 +59,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@securityServiceImpl.hasAccesAdmin(authentication, #id)")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();

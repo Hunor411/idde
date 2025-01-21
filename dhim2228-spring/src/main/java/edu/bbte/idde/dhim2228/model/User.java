@@ -30,10 +30,18 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Attendee> events;
 
+    @Column(name = "is_admin", nullable = false)
+    private boolean isAdmin;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        if (isAdmin) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
         for (Attendee attendee : getEvents()) {
             String role = "ROLE_" + attendee.getRole().name() + "_EVENT_" + attendee.getId().getEventId();
             authorities.add(new SimpleGrantedAuthority(role));

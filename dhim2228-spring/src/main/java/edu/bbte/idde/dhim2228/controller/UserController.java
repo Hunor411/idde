@@ -7,6 +7,7 @@ import edu.bbte.idde.dhim2228.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,27 +27,32 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Collection<UserShortResponseDto>> getAllUsers() {
         return ResponseEntity.ok(userService.findAllUser());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') || #id == authentication.principal.id")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserResponseDto> getAuthenticatedUser() {
         return ResponseEntity.ok(userService.getAuthenticatedUser());
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') || #id == authentication.principal.id")
     public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto user) {
         userService.update(id, user);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') || #id == authentication.principal.id")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

@@ -103,9 +103,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
-//            throw new NoAuthenticatedUserException("No authenticated user found");
-//        }
         return userMapper.toResponseDto((User) authentication.getPrincipal());
     }
 }
