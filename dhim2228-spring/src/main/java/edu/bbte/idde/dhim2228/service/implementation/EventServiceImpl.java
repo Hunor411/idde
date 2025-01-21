@@ -9,7 +9,7 @@ import edu.bbte.idde.dhim2228.mapper.AttendeeMapper;
 import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.*;
 import edu.bbte.idde.dhim2228.repository.AttendeeRepository;
-import edu.bbte.idde.dhim2228.repository.EventRepository;
+import edu.bbte.idde.dhim2228.repository.EventFilterRepository;
 import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
-    private final EventRepository eventRepository;
+    private final EventFilterRepository eventRepository;
     private final AttendeeRepository attendeeRepository;
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
@@ -109,8 +109,7 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findById(data.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + data.getUserId()));
 
-        boolean exists = attendeeRepository.findById(new AttendeeId(eventId, data.getUserId())).isPresent();
-        if (exists) {
+        if (event.getAttendees().stream().anyMatch(a -> a.getUser().getId().equals(data.getUserId()))) {
             throw new UserAlreadyExistException(
                     "User with id " + data.getUserId() + " is already part of event with id " + eventId
             );
@@ -147,22 +146,26 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<EventUserDetailsResponseDto> getEventUsers(Long id) {
-        checkExistsEventById(id);
+        Event event = eventRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Event not found with id: " + id)
+        );
         log.info("Fetching users with id: {}", id);
-        return attendeeMapper.toEventUserDetailsResponseDtoList(attendeeRepository.findAllByEventId(id));
+        return attendeeMapper.toEventUserDetailsResponseDtoList(event.getAttendees());
     }
 
     @Override
     public void deleteUserFromEvent(Long eventId, Long userId) {
-        checkExistsEventById(eventId);
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
-        log.info("Deleting user {} from event with id: {}", userId, eventId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found with id: " + eventId));
 
-        attendeeRepository.findById(new AttendeeId(eventId, userId))
+        Attendee attendee = event.getAttendees().stream()
+                .filter(a -> a.getUser().getId().equals(userId))
+                .findFirst()
                 .orElseThrow(() -> new NotFoundException(
                         "User with id " + userId + " is not part of event with id " + eventId
                 ));
 
-        attendeeRepository.deleteById(new AttendeeId(eventId, userId));
+        event.getAttendees().remove(attendee);
+        attendeeRepository.delete(attendee);
     }
 }
