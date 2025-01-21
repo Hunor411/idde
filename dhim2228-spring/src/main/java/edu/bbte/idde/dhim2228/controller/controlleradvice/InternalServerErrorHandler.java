@@ -14,7 +14,7 @@ public class InternalServerErrorHandler {
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ErrorResponseDto> handleServiceException(ServiceException e) {
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                e.getMessage(),
+                "Internal Server Error",
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);

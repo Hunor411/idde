@@ -1,7 +1,6 @@
-package edu.bbte.idde.dhim2228.dto;
+package edu.bbte.idde.dhim2228.dto.event;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,8 +24,4 @@ public class EventRequestDto {
 
     @Size(max = 500)
     private String description;
-
-    @NotNull
-    @Positive
-    private Integer attendeesCount;
 }

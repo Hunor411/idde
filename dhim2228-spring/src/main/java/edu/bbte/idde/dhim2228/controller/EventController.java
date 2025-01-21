@@ -1,8 +1,8 @@
 package edu.bbte.idde.dhim2228.controller;
 
-import edu.bbte.idde.dhim2228.dto.EventRequestDto;
-import edu.bbte.idde.dhim2228.dto.EventResponseDto;
-import edu.bbte.idde.dhim2228.dto.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,6 @@ import java.util.Collection;
 @RestController
 @RequestMapping("api/events")
 @RequiredArgsConstructor
-@CrossOrigin(
-        origins = "http://localhost:5173",
-        allowedHeaders = "*",
-        exposedHeaders = "*",
-        maxAge = 3600,
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}
-)
 public class EventController {
     private final EventService eventService;
 

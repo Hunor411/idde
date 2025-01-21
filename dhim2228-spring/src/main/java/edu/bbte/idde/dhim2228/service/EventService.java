@@ -1,24 +1,33 @@
 package edu.bbte.idde.dhim2228.service;
 
-import edu.bbte.idde.dhim2228.dto.EventRequestDto;
-import edu.bbte.idde.dhim2228.dto.EventResponseDto;
-import edu.bbte.idde.dhim2228.dto.EventShortResponseDto;
-import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
+import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventUserDetailsResponseDto;
 
 import java.util.Collection;
 
 public interface EventService {
-    Long save(EventRequestDto eventRequestDto) throws ServiceException;
+    Long save(EventRequestDto eventRequestDto);
 
-    void update(Long id, EventRequestDto eventRequestDto) throws ServiceException;
+    void update(Long id, EventRequestDto eventRequestDto);
 
-    Collection<EventShortResponseDto> getAllEvents() throws ServiceException;
+    Collection<EventShortResponseDto> getAllEvents();
 
-    EventResponseDto getEventById(Long id) throws ServiceException;
+    EventResponseDto getEventById(Long id);
 
-    void deleteEvent(Long id) throws ServiceException;
+    void deleteEvent(Long id);
 
-    Collection<EventShortResponseDto> searchEvents(String name, String location) throws ServiceException;
+    Collection<EventShortResponseDto> searchEvents(String name, String location);
 
-    EventResponseDto findClosestEvent() throws ServiceException;
+    EventResponseDto findClosestEvent();
+
+    void addUserToEvent(Long eventId, AttendeeRequestDto data);
+
+    void acceptInvitation(Long eventId, Long userId);
+
+    Collection<EventUserDetailsResponseDto> getEventUsers(Long id);
+
+    void deleteUserFromEvent(Long eventId, Long userId);
 }

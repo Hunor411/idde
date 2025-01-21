@@ -1,24 +1,24 @@
 package edu.bbte.idde.dhim2228.mapper;
 
-import edu.bbte.idde.dhim2228.dto.EventRequestDto;
-import edu.bbte.idde.dhim2228.dto.EventResponseDto;
-import edu.bbte.idde.dhim2228.dto.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
+import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
 import edu.bbte.idde.dhim2228.model.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.Collection;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = AttendeeMapper.class)
 public interface EventMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "attendees", ignore = true)
     Event toEntityDto(EventRequestDto dto);
+
+    @Mapping(target = "attendees", source = "attendees")
+    EventResponseDto toResponseDto(Event entity);
 
     EventShortResponseDto toShortResponseDto(Event event);
 
-    EventResponseDto toResponseDto(Event entity);
-
     Collection<EventShortResponseDto> toShortResponseDtoList(Collection<Event> entities);
-
-    Collection<EventResponseDto> toResponseDtoList(Collection<Event> entities);
 }
