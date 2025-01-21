@@ -54,8 +54,6 @@ public class InvitationServiceImpl implements InvitationService {
     public void acceptInvitation(Long eventId, Long userId) {
         eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException("Event not found with id: " + eventId));
-        userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("User not found with id: " + userId));
 
         Attendee attendee = attendeeRepository.findById(new AttendeeId(eventId, userId))
                 .orElseThrow(() -> new NotFoundException(
@@ -72,7 +70,20 @@ public class InvitationServiceImpl implements InvitationService {
 
     @Override
     public void declineInvitation(Long eventId, Long userId) {
+        eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Event not found with id: " + eventId));
 
+        Attendee attendee = attendeeRepository.findById(new AttendeeId(eventId, userId))
+                .orElseThrow(() -> new NotFoundException(
+                        "User with id " + userId + " has no invitation for event with id " + eventId
+                ));
+
+        if (attendee.getUserStatus() == Status.REJECTED) {
+            throw new IllegalStateException("User has already rejected the invitation.");
+        }
+
+        attendee.setUserStatus(Status.REJECTED);
+        attendeeRepository.save(attendee);
     }
 
     @Override

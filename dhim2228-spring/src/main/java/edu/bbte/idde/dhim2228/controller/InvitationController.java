@@ -2,12 +2,14 @@ package edu.bbte.idde.dhim2228.controller;
 
 import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventUserDetailsResponseDto;
+import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.service.InvitationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -31,15 +33,19 @@ public class InvitationController {
 
     @PatchMapping("{id}/invitations/accept")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> acceptInvitation(@PathVariable Long id) {
-
+    public ResponseEntity<Void> acceptInvitation(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        invitationService.acceptInvitation(id, user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("{id}/invitations/decline")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> declineInvitation(@PathVariable Long id) {
-
+    public ResponseEntity<Void> declineInvitation(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        invitationService.declineInvitation(id, user.getId());
         return ResponseEntity.noContent().build();
     }
 
