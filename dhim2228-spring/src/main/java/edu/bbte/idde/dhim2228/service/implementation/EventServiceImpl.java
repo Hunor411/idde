@@ -12,6 +12,8 @@ import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
 import edu.bbte.idde.dhim2228.service.exceptions.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -69,9 +71,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventShortResponseDto> getAllEvents() {
+    public Page<EventShortResponseDto> getAllEvents(Pageable pageable) {
         log.info("Getting all events");
-        return eventMapper.toShortResponseDtoList(new ArrayList<>(eventRepository.findAll()));
+        return eventMapper.toShortResponseDtoList(eventRepository.findAll(pageable));
     }
 
     @Override
@@ -90,10 +92,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventShortResponseDto> searchEvents(String name, String location) throws ServiceException {
-        Collection<Event> events = eventRepository
-                .findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(name, location);
-        if (events == null || events.isEmpty()) {
+    public Page<EventShortResponseDto> searchEvents(String name, String location, Pageable pageable) throws ServiceException {
+        Page<Event> events = eventRepository
+                .findByNameContainingIgnoreCaseAndLocationContainingIgnoreCase(name, location, pageable);
+
+        if (events.isEmpty()) {
             throw new NotFoundException("No events found for the given name and location.");
         }
 

@@ -1,18 +1,23 @@
 package edu.bbte.idde.dhim2228.controller;
 
+import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
+import edu.bbte.idde.dhim2228.mapper.EventPaginationMapper;
 import edu.bbte.idde.dhim2228.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -20,6 +25,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final EventPaginationMapper eventPaginationMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -30,15 +36,20 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<EventShortResponseDto>> getAllEvents(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String location
+    public ResponseEntity<PaginatedResponseDto<EventShortResponseDto>> getAllEvents(
+            @RequestParam(required = false, defaultValue = "") String name,
+            @RequestParam(required = false, defaultValue = "") String location,
+            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
+        Page<EventShortResponseDto> events;
+
         if (name != null || location != null) {
-            return ResponseEntity.ok(eventService.searchEvents(name, location));
+            events = eventService.searchEvents(name, location, pageable);
+        } else {
+            events = eventService.getAllEvents(pageable);
         }
 
-        return ResponseEntity.ok(eventService.getAllEvents());
+        return ResponseEntity.ok(eventPaginationMapper.toPaginatedResponse(events));
     }
 
     @GetMapping("/{id}")
