@@ -27,8 +27,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/events").permitAll()
-                        .requestMatchers("/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

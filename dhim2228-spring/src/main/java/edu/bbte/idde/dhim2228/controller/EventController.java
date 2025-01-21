@@ -40,7 +40,7 @@ public class EventController {
     ) {
         PaginatedResponseDto<EventShortResponseDto> events;
 
-        if (name != null || location != null) {
+        if (!name.isBlank() || !location.isBlank()) {
             events = eventService.searchEvents(name, location, pageable);
         } else {
             events = eventService.getAllEvents(pageable);
