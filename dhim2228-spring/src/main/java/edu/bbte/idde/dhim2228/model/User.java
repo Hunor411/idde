@@ -28,7 +28,7 @@ public class User extends BaseEntity implements UserDetails {
     private String passwordHash;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Attendee> events;
+    private List<Attendee> events = new ArrayList<>();
 
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
