@@ -39,11 +39,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (jwtToken != null && !jwtToken.isBlank() && jwtutils.validateJwtToken(jwtToken)) {
             String username = jwtutils.getUsernameFromJwtToken(jwtToken);
             User user = userService.loadUserByUsername(username);
-            log.info("User '{}' is attempting to access '{}' with authorities: {}",
-                    username,
-                    request.getRequestURI(),
-                    user.getAuthorities());
-
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     user,
                     null,
