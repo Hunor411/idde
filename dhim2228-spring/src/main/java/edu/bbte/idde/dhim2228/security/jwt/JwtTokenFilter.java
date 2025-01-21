@@ -30,10 +30,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
-        log.info("Incoming request: [Method: {}, URI: {}, IP: {}]",
-                request.getMethod(),
-                request.getRequestURI(),
-                request.getRemoteAddr());
 
         String jwtToken = jwtutils.getJwtFromCookies(request);
         if (jwtToken != null && !jwtToken.isBlank() && jwtutils.validateJwtToken(jwtToken)) {
