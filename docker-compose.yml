@@ -1,12 +1,33 @@
 version: "3.8"
 
 services:
+  app-dev:
+    build:
+      context: .
+      dockerfile: ./dhim2228-spring/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8080:8080"
+
+  app-prod:
+    build:
+      context: .
+      dockerfile: ./dhim2228-spring/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://idde-mysql:3306/idde
+    depends_on:
+      - idde-mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - idde
+
   idde-mysql:
     image: mysql:8.0.33
     restart: unless-stopped
     container_name: idde-mysql
-    ports:
-      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: HnsAdrt0WtynpKJd
       MYSQL_USER: idde

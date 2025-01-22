@@ -19,3 +19,20 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
+
+bootJar {
+    enabled = true
+    if (System.getProperty('spring.profiles.active') == 'prod') {
+        configurations {
+            runtimeClasspath {
+                exclude group: 'com.h2database', module: 'h2'
+            }
+        }
+    } else {
+        configurations {
+            runtimeClasspath {
+                exclude group: 'mysql', module: 'mysql-connector-java'
+            }
+        }
+    }
+}
