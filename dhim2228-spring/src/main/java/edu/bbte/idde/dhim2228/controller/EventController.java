@@ -38,10 +38,13 @@ public class EventController {
             @RequestParam(required = false, defaultValue = "") String location,
             @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        PaginatedResponseDto<EventShortResponseDto> events =
-                (!name.isBlank() || !location.isBlank())
-                        ? eventService.searchEvents(name, location, pageable)
-                        : eventService.getAllEvents(pageable);
+        PaginatedResponseDto<EventShortResponseDto> events;
+        boolean hasFilters = !name.isBlank() || !location.isBlank();
+        if (hasFilters) {
+            events = eventService.searchEvents(name, location, pageable);
+        } else {
+            events = eventService.getAllEvents(pageable);
+        }
 
         return ResponseEntity.ok(events);
     }
