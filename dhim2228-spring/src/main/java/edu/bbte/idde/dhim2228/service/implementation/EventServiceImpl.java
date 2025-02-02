@@ -1,6 +1,7 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
 import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventIdResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
@@ -33,7 +34,7 @@ public class EventServiceImpl implements EventService {
     private final EventPaginationMapper eventPaginationMapper;
 
     @Override
-    public Long save(EventRequestDto eventRequestDto) throws ServiceException {
+    public EventIdResponseDto save(EventRequestDto eventRequestDto) throws ServiceException {
         log.info("Saving event: {}", eventRequestDto);
         Long newEventId = eventRepository.save(eventMapper.toEntityDto(eventRequestDto)).getId();
 
@@ -51,7 +52,7 @@ public class EventServiceImpl implements EventService {
 
         attendeeRepository.save(attendee);
 
-        return newEventId;
+        return eventMapper.toEventIdResponseDto(event);
     }
 
     private void checkExistsEventById(Long id) {
@@ -83,15 +84,16 @@ public class EventServiceImpl implements EventService {
     public EventResponseDto getEventById(Long id) {
         log.info("Getting event with id: {}", id);
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
         return eventMapper.toResponseDto(event);
     }
 
     @Override
     public void deleteEvent(Long id) {
         log.warn("Deleting event with id {}", id);
-        checkExistsEventById(id);
-        eventRepository.deleteById(id);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+        eventRepository.delete(event);
     }
 
     @Override

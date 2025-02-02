@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AttendeeRequestDto {
     @NotNull
-    private Long userId;
+    private String username;
 
     @NotNull
     private Role role;

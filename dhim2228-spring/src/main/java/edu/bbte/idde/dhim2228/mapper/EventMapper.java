@@ -1,5 +1,6 @@
 package edu.bbte.idde.dhim2228.mapper;
 
+import edu.bbte.idde.dhim2228.dto.event.EventIdResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring", uses = AttendeeMapper.class)
 public interface EventMapper {
+    EventIdResponseDto toEventIdResponseDto(Event event);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "attendees", ignore = true)
     Event toEntityDto(EventRequestDto dto);

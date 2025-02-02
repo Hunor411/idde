@@ -1,9 +1,11 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
 import edu.bbte.idde.dhim2228.dto.user.UserLoginRequestDto;
+import edu.bbte.idde.dhim2228.dto.user.UserRequestDto;
 import edu.bbte.idde.dhim2228.model.User;
 import edu.bbte.idde.dhim2228.security.jwt.JwtUtils;
 import edu.bbte.idde.dhim2228.service.AuthenticationService;
+import edu.bbte.idde.dhim2228.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -19,7 +21,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
     private final JwtUtils jwtutils;
+
+    @Override
+    public Long register(UserRequestDto userRequestDto) {
+        return userService.save(userRequestDto);
+    }
 
     @Override
     public ResponseCookie login(UserLoginRequestDto userLoginRequestDto) {

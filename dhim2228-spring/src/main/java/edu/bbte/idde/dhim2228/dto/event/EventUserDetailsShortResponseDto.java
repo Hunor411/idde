@@ -1,13 +1,12 @@
 package edu.bbte.idde.dhim2228.dto.event;
 
-import edu.bbte.idde.dhim2228.dto.user.UserShortResponseDto;
 import edu.bbte.idde.dhim2228.model.Role;
 import edu.bbte.idde.dhim2228.model.Status;
 import lombok.Data;
 
 @Data
-public class EventUserDetailsResponseDto {
-    private UserShortResponseDto user;
+public class EventUserDetailsShortResponseDto {
+    private Long userId;
     private Role role;
     private Status status;
 }

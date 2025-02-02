@@ -30,16 +30,16 @@ public class InvitationServiceImpl implements InvitationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found with id: " + eventId));
 
-        User user = userRepository.findById(data.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + data.getUserId()));
+        User user = userRepository.findByUsername(data.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + data.getUsername()));
 
-        if (event.getAttendees().stream().anyMatch(a -> a.getUser().getId().equals(data.getUserId()))) {
+        if (event.getAttendees().stream().anyMatch(a -> a.getUser().getUsername().equals(data.getUsername()))) {
             throw new UserAlreadyExistException(
-                    "User with id " + data.getUserId() + " is already part of event with id " + eventId
+                    "User with id " + data.getUsername() + " is already part of event with id " + eventId
             );
         }
 
-        log.info("Adding user {} to event with id: {}", data.getUserId(), eventId);
+        log.info("Adding user {} to event with id: {}", data.getUsername(), eventId);
 
         Attendee attendee = new Attendee();
         attendee.setId(new AttendeeId(event.getId(), user.getId()));

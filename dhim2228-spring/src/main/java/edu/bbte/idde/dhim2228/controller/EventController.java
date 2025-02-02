@@ -1,6 +1,7 @@
 package edu.bbte.idde.dhim2228.controller;
 
 import edu.bbte.idde.dhim2228.dto.PaginatedResponseDto;
+import edu.bbte.idde.dhim2228.dto.event.EventIdResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
@@ -15,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @Slf4j
 @RestController
 @RequestMapping("api/events")
@@ -26,10 +25,8 @@ public class EventController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
-        Long id = eventService.save(eventRequestDto);
-        URI createUri = URI.create("/api/events/" + id);
-        return ResponseEntity.created(createUri).build();
+    public ResponseEntity<EventIdResponseDto> createEvent(@Valid @RequestBody EventRequestDto eventRequestDto) {
+        return ResponseEntity.ok(eventService.save(eventRequestDto));
     }
 
     @GetMapping

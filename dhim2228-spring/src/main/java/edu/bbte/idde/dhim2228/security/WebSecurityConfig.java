@@ -27,7 +27,8 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -47,6 +48,7 @@ public class WebSecurityConfig {
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
+                HttpMethod.PATCH.name(),
                 HttpMethod.DELETE.name(),
                 HttpMethod.OPTIONS.name()
         ));

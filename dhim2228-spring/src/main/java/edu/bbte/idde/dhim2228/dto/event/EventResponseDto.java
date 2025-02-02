@@ -13,5 +13,5 @@ public class EventResponseDto {
     private LocalDateTime date;
     private Boolean isOnline;
     private String description;
-    private List<EventUserDetailsResponseDto> attendees;
+    private List<EventUserDetailsShortResponseDto> attendees;
 }
