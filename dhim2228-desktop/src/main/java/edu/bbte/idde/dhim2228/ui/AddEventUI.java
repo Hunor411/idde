@@ -178,6 +178,6 @@ public class AddEventUI extends JFrame {
         int attendeesCount = Integer.parseInt(attendeesCountField.getText());
         boolean isOnline = onlineEventCheckBox.isSelected();
 
-        return new EventModel(name, location, date, isOnline, description, attendeesCount);
+        return new EventModel(name, location, date, isOnline, description, attendeesCount, "");
     }
 }

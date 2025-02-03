@@ -18,4 +18,5 @@ public class EventModel extends BaseModel {
     private Boolean isOnline;
     private String description;
     private Integer attendeesCount;
+    private String lastUpdatedAt;
 }

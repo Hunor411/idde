@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -34,6 +35,7 @@ public class InMemoryEventDao implements EventDao {
         log.info("Creating event: {}", event);
         Long newId = counter.incrementAndGet();
         event.setId(newId);
+        event.setLastUpdatedAt(String.valueOf(new Date()));
         events.put(newId, event);
         log.info("Event {} created", events);
     }
@@ -46,6 +48,7 @@ public class InMemoryEventDao implements EventDao {
             throw new RepositoryException("Event with id " + id + " not found");
         }
 
+        event.setLastUpdatedAt(String.valueOf(new Date()));
         events.put(id, event);
         log.info("Event with id {} updated successfully", id);
     }

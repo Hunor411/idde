@@ -108,6 +108,11 @@ public class EventServlet extends HttpServlet {
 
         try {
             EventModel event = objectMapper.readValue(req.getReader(), EventModel.class);
+            if (event.getLastUpdatedAt() != null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                sendErrorJson(resp, "asd");
+                return;
+            }
             if (!validEvent(event)) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 sendErrorJson(resp, "Invalid object!");
@@ -146,6 +151,11 @@ public class EventServlet extends HttpServlet {
             }
 
             EventModel event = objectMapper.readValue(req.getReader(), EventModel.class);
+            if (event.getLastUpdatedAt() != null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                sendErrorJson(resp, "asd");
+                return;
+            }
             if (!validEvent(event)) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 sendErrorJson(resp, "Invalid object!");

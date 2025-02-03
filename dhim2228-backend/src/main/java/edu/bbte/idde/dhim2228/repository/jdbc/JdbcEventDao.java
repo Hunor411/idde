@@ -24,6 +24,7 @@ public class JdbcEventDao implements EventDao {
             eventModel.setIsOnline(resultSet.getBoolean("is_online"));
             eventModel.setDescription(resultSet.getString("description"));
             eventModel.setAttendeesCount(resultSet.getInt("attendees_count"));
+            eventModel.setLastUpdatedAt(resultSet.getString("last_updated_at"));
 
             return eventModel;
         }
@@ -74,8 +75,9 @@ public class JdbcEventDao implements EventDao {
         log.info("Creating event: {}", event);
         try (Connection conn = ConnectionManager.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO events(name, location, date, is_online, description, attendees_count)"
-                             + "VALUES(?, ?, ?, ?, ?, ?)")) {
+                     "INSERT INTO events(name, location, date, is_online, "
+                             + "description, attendees_count, last_updated_at)"
+                             + "VALUES(?, ?, ?, ?, ?, ?, NOW())")) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());
@@ -96,8 +98,8 @@ public class JdbcEventDao implements EventDao {
         log.info("Updating event with id: {}", id);
         try (Connection conn = ConnectionManager.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, attendees_count=? "
-                             + "WHERE id=?")) {
+                     "UPDATE events SET name=?, location=?, date=?, is_online=?, description=?, "
+                             + "attendees_count=?, last_updated_at = NOW() WHERE id=?")) {
 
             stmt.setString(1, event.getName());
             stmt.setString(2, event.getLocation());

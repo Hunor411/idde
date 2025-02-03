@@ -31,7 +31,7 @@ public class EventManagerUI extends JFrame implements EventManager {
         this.setLayout(new BorderLayout());
         this.setTitle("Esemenykezelő rendszer");
 
-        String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "Leírás", "Résztvevők száma", "ID"};
+        String[] columnNames = {"Név", "Helyszín", "Dátum", "Online", "Leírás", "Résztvevők száma", "Modositva", "ID"};
 
         tableModel = new NonEditableTableModel(columnNames, 0);
         eventsTable = new JTable(tableModel);
@@ -151,6 +151,7 @@ public class EventManagerUI extends JFrame implements EventManager {
                     event.getIsOnline() ? "igen" : "nem",
                     event.getDescription(),
                     event.getAttendeesCount(),
+                    event.getLastUpdatedAt(),
                     event.getId(),
             };
             tableModel.addRow(rowData);

@@ -64,7 +64,7 @@ public class UpdateEventUI extends JFrame {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 LocalDateTime date = LocalDateTime.parse(dateStr, formatter);
 
-                EventModel updatedEvent = new EventModel(name, location, date, online, description, attendees);
+                EventModel updatedEvent = new EventModel(name, location, date, online, description, attendees, "");
                 eventService.updateEvent(eventId, updatedEvent);
 
                 JOptionPane.showMessageDialog(this, "Esemény sikeresen módosítva!");
