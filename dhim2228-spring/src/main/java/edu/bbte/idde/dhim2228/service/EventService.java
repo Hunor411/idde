@@ -11,11 +11,11 @@ import java.util.Collection;
 public interface EventService {
     Long save(EventRequestDto eventRequestDto);
 
-    void update(Long id, EventRequestDto eventRequestDto);
+    void update(Long id, EventRequestDto eventRequestDto,  String tokenValue);
 
     Collection<EventShortResponseDto> getAllEvents();
 
-    EventResponseDto getEventById(Long id);
+    EventResponseDto getEventById(Long id, String tokenValue);
 
     void deleteEvent(Long id);
 

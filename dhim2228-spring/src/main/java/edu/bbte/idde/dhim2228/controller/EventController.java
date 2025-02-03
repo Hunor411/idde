@@ -1,5 +1,6 @@
 package edu.bbte.idde.dhim2228.controller;
 
+import edu.bbte.idde.dhim2228.controller.exceptions.MissingToken;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
 import edu.bbte.idde.dhim2228.dto.event.EventShortResponseDto;
@@ -40,16 +41,23 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponseDto> getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventResponseDto> getEventById(
+            @PathVariable Long id,
+            @RequestHeader(required = false) String token) {
         log.info("Get event by id: {}", id);
-        return ResponseEntity.ok(eventService.getEventById(id));
+        log.info("token: {}", token);
+        if (token == null) {
+            throw new MissingToken("Missing token header!");
+        }
+        return ResponseEntity.ok(eventService.getEventById(id, token));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateEvent(
             @PathVariable Long id,
-            @Valid @RequestBody EventRequestDto eventRequestDto) {
-        eventService.update(id, eventRequestDto);
+            @Valid @RequestBody EventRequestDto eventRequestDto,
+            @RequestHeader(required = false) String token) {
+        eventService.update(id, eventRequestDto, token);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,5 +1,6 @@
 package edu.bbte.idde.dhim2228.service.implementation;
 
+import edu.bbte.idde.dhim2228.controller.exceptions.InvalidToken;
 import edu.bbte.idde.dhim2228.dto.attendee.AttendeeRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventRequestDto;
 import edu.bbte.idde.dhim2228.dto.event.EventResponseDto;
@@ -10,6 +11,7 @@ import edu.bbte.idde.dhim2228.mapper.EventMapper;
 import edu.bbte.idde.dhim2228.model.*;
 import edu.bbte.idde.dhim2228.repository.AttendeeRepository;
 import edu.bbte.idde.dhim2228.repository.EventFilterRepository;
+import edu.bbte.idde.dhim2228.repository.TokenRepository;
 import edu.bbte.idde.dhim2228.repository.UserRepository;
 import edu.bbte.idde.dhim2228.service.EventService;
 import edu.bbte.idde.dhim2228.service.exceptions.NotFoundException;
@@ -33,6 +35,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
     private final AttendeeMapper attendeeMapper;
+    private final TokenRepository tokenRepository;
 
     @Override
     public Long save(EventRequestDto eventRequestDto) throws ServiceException {
@@ -49,7 +52,16 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void update(Long id, EventRequestDto eventRequestDto) {
+    public void update(Long id, EventRequestDto eventRequestDto, String tokenValue) {
+        Token token = tokenRepository.findByValue(tokenValue);
+        if (token == null) {
+            throw new InvalidToken("Invalid token!");
+        }
+
+        if (token.getType() != Type.READ || token.getEntity() != Entities.EVENT) {
+            throw new InvalidToken("Permission denied");
+        }
+
         log.info("Updating event: {}", eventRequestDto);
         checkExistsEventById(id);
         Event eventToUpdate = eventMapper.toEntityDto(eventRequestDto);
@@ -64,7 +76,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventResponseDto getEventById(Long id) {
+    public EventResponseDto getEventById(Long id, String tokenValue) {
+
+        Token token = tokenRepository.findByValue(tokenValue);
+        if (token == null) {
+            throw new InvalidToken("Invalid token!");
+        }
+
+        if (token.getType() != Type.READ || token.getEntity() != Entities.EVENT) {
+            throw new InvalidToken("Permission denied");
+        }
+
         log.info("Getting event with id: {}", id);
         Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty()) {
