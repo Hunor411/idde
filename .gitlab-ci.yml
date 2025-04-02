@@ -28,8 +28,8 @@ build-sonar:
     paths:
       - "${SONAR_USER_HOME}/cache"
       - sonar-scanner/
-    script: gradle sonar
-    allow_failure: true
+  script: gradle sonar
+  allow_failure: true
   only:
     - merge_requests
     - master
