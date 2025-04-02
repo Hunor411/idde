@@ -16,6 +16,8 @@ lint:
 
 build-sonar:
   stage: build-sonar
+  tags:
+    - localhost_verval
   image: gradle:8.4.0-jdk21-jammy
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
