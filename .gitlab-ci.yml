@@ -1,5 +1,6 @@
 stages:
   - lint
+  - build-sonar
 
 lint:
   stage: lint
@@ -12,3 +13,26 @@ lint:
   cache:
     paths:
       - .gradle
+
+build-sonar:
+  stage: build-sonar
+  image: gradle:8.4.0-jdk21-jammy
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    policy: pull-push
+    key: "sonar-cache-$CI_COMMIT_REF_SLUG"
+    paths:
+      - "${SONAR_USER_HOME}/cache"
+      - sonar-scanner/
+    script: gradle sonar
+    allow_failure: true
+  only:
+    - merge_requests
+    - master
+    - main
+    - develop
+    - sonarqube

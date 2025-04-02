@@ -1,5 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '3.4.0'
+    id "org.sonarqube" version "6.0.1.5171"
 }
 
 dependencies {
@@ -34,5 +35,13 @@ bootJar {
                 exclude group: 'mysql', module: 'mysql-connector-java'
             }
         }
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "deakHuni_idde_2b4fb71f-6ab0-492f-acee-de1432aca232"
+        property "sonar.projectName", "Idde"
+        property "sonar.qualitygate.wait", true
     }
 }
